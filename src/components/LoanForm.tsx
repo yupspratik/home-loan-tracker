@@ -1,7 +1,7 @@
 'use client';
 
 import { LoanInputs, RecalculationStrategy } from '@/lib/financial/types';
-import { Calculator, Calendar, Coins, Percent, RefreshCw } from 'lucide-react';
+import { Calculator, Calendar, CalendarDays, Coins, Percent, RefreshCw } from 'lucide-react';
 import React from 'react';
 
 interface LoanFormProps {
@@ -17,6 +17,21 @@ export function LoanForm({ inputs, onChange }: LoanFormProps) {
     });
   };
 
+  const months = [
+    { value: 1, label: 'January' },
+    { value: 2, label: 'February' },
+    { value: 3, label: 'March' },
+    { value: 4, label: 'April' },
+    { value: 5, label: 'May' },
+    { value: 6, label: 'June' },
+    { value: 7, label: 'July' },
+    { value: 8, label: 'August' },
+    { value: 9, label: 'September' },
+    { value: 10, label: 'October' },
+    { value: 11, label: 'November' },
+    { value: 12, label: 'December' },
+  ];
+
   return (
     <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-xl mb-8">
       <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800">
@@ -25,11 +40,11 @@ export function LoanForm({ inputs, onChange }: LoanFormProps) {
         </div>
         <div>
           <h2 className="text-lg font-semibold text-white">Loan Setup & Strategy</h2>
-          <p className="text-xs text-slate-400">Configure your primary loan parameters and prepayment impact strategy.</p>
+          <p className="text-xs text-slate-400">Configure your primary loan parameters, start date, and prepayment impact strategy.</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
         {/* Loan Amount */}
         <div>
           <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
@@ -85,6 +100,38 @@ export function LoanForm({ inputs, onChange }: LoanFormProps) {
             <div className="flex items-center px-3 bg-slate-800 border border-slate-700 rounded-xl text-xs font-medium text-slate-400">
               {inputs.tenureMonths}m
             </div>
+          </div>
+        </div>
+
+        {/* Loan Start Date (Month & Year) */}
+        <div>
+          <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
+            <CalendarDays className="w-3.5 h-3.5 text-purple-400" />
+            Start Date (Month / Year)
+          </label>
+          <div className="flex gap-2">
+            <select
+              id="input-start-month"
+              value={inputs.startMonth || 1}
+              onChange={(e) => handleChange('startMonth', parseInt(e.target.value) || 1)}
+              className="w-1/2 bg-slate-800/80 border border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl px-2.5 py-2.5 text-xs font-semibold text-white transition-all outline-none cursor-pointer"
+            >
+              {months.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label.slice(0, 3)}
+                </option>
+              ))}
+            </select>
+            <input
+              id="input-start-year"
+              type="number"
+              min="2000"
+              max="2060"
+              step="1"
+              value={inputs.startYear || new Date().getFullYear()}
+              onChange={(e) => handleChange('startYear', parseInt(e.target.value) || 2024)}
+              className="w-1/2 bg-slate-800/80 border border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl px-2.5 py-2.5 text-xs font-semibold text-white transition-all outline-none"
+            />
           </div>
         </div>
 

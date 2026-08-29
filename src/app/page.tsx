@@ -20,17 +20,18 @@ import {
   SavedLoanState,
   saveLoanStateToStorage,
 } from '@/lib/storage';
-import { Building2, Sparkles } from 'lucide-react';
+import { Building2, Database, HardDrive, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isDbSynced, setIsDbSynced] = useState<boolean>(false);
   const [loanInputs, setLoanInputs] = useState<LoanInputs>(DEFAULT_LOAN_STATE.inputs);
   const [rateChanges, setRateChanges] = useState<InterestRateChange[]>(DEFAULT_LOAN_STATE.rateChanges);
   const [prepaymentRules, setPrepaymentRules] = useState<PrepaymentRule[]>(DEFAULT_LOAN_STATE.prepaymentRules);
   const [actualPaymentLogs, setActualPaymentLogs] = useState<ActualPaymentLog[]>(DEFAULT_LOAN_STATE.actualPaymentLogs);
 
-  // Load saved state on client mount
+  // Load saved state on client mount (LocalStorage first for fast load, then sync Supabase API)
   useEffect(() => {
     const saved = loadLoanStateFromStorage();
     setLoanInputs(saved.inputs);
@@ -38,18 +39,47 @@ export default function Home() {
     setPrepaymentRules(saved.prepaymentRules);
     setActualPaymentLogs(saved.actualPaymentLogs);
     setIsLoaded(true);
+
+    // Fetch from Supabase API if configured
+    fetch('/api/loans')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.isDbConfigured) {
+          setIsDbSynced(true);
+          if (data.loanState) {
+            setLoanInputs(data.loanState.inputs);
+            setRateChanges(data.loanState.rateChanges || []);
+            setPrepaymentRules(data.loanState.prepaymentRules || []);
+            setActualPaymentLogs(data.loanState.actualPaymentLogs || []);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log('Using browser storage mode:', err);
+      });
   }, []);
 
-  // Save changes to local storage whenever updated
+  // Save changes to local storage & Supabase API whenever updated
   useEffect(() => {
     if (!isLoaded) return;
-    saveLoanStateToStorage({
+
+    const stateToSave: SavedLoanState = {
       inputs: loanInputs,
       rateChanges,
       prepaymentRules,
       actualPaymentLogs,
-    });
-  }, [loanInputs, rateChanges, prepaymentRules, actualPaymentLogs, isLoaded]);
+    };
+
+    saveLoanStateToStorage(stateToSave);
+
+    if (isDbSynced) {
+      fetch('/api/loans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(stateToSave),
+      }).catch((err) => console.error('Cloud sync error:', err));
+    }
+  }, [loanInputs, rateChanges, prepaymentRules, actualPaymentLogs, isLoaded, isDbSynced]);
 
   // Compute amortization result dynamically
   const amortizationResult = useMemo(() => {
@@ -97,13 +127,19 @@ export default function Home() {
               <Building2 className="w-7 h-7" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-bold tracking-tight text-white">
                   Home Loan Repayment & Forecast Tracker
                 </h1>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <Sparkles className="w-3 h-3" /> Live Forecaster
-                </span>
+                {isDbSynced ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <Database className="w-3 h-3" /> Supabase Cloud Synced
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    <HardDrive className="w-3 h-3" /> Browser Storage
+                  </span>
+                )}
               </div>
               <p className="text-xs text-slate-400 mt-1">
                 Track interest rate changes, schedule custom prepayments, log actual EMI payments, and project payoff timeline.

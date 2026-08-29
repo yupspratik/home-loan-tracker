@@ -127,7 +127,7 @@ export function LoanCharts({ rows }: LoanChartsProps) {
                 contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.75rem', fontSize: '12px' }}
                 formatter={(val: any, name: any) => [
                   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(val)),
-                  name === 'principalPaid' ? 'Principal Paid' : 'Interest Paid',
+                  name === 'Principal Paid' || name === 'principalPaid' ? 'Principal Paid' : 'Interest Paid',
                 ]}
               />
               <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />

@@ -2,11 +2,16 @@
 
 import { AmortizationTable } from '@/components/AmortizationTable';
 import { ExportImport } from '@/components/ExportImport';
+import { FinancialYearDashboard } from '@/components/FinancialYearDashboard';
 import { LoanCharts } from '@/components/LoanCharts';
 import { LoanForm } from '@/components/LoanForm';
+import { PdfExportButton } from '@/components/PdfExportButton';
 import { PrepaymentManager } from '@/components/PrepaymentManager';
 import { RateChangeManager } from '@/components/RateChangeManager';
+import { ShareModal } from '@/components/ShareModal';
 import { SummaryCards } from '@/components/SummaryCards';
+import { TaxCalculatorCard } from '@/components/TaxCalculatorCard';
+import { WhatIfSimulator } from '@/components/WhatIfSimulator';
 import { calculateAmortization } from '@/lib/financial/calculator';
 import {
   ActualPaymentLog,
@@ -146,15 +151,24 @@ export default function Home() {
               </p>
             </div>
           </div>
+
+          {/* Action Header Controls */}
+          <div className="flex items-center gap-3 self-start md:self-auto">
+            <PdfExportButton />
+            <ShareModal />
+          </div>
         </header>
 
         {/* 1. Key Metrics Overview */}
         <SummaryCards summary={amortizationResult.summary} scheduledEmi={scheduledEmi} />
 
-        {/* 2. Loan Input Setup */}
+        {/* 2. Financial Year View & Dashboard */}
+        <FinancialYearDashboard rows={amortizationResult.rows} />
+
+        {/* 3. Loan Input Setup */}
         <LoanForm inputs={loanInputs} onChange={setLoanInputs} />
 
-        {/* 3. Interest Rate Revisions */}
+        {/* 4. Interest Rate Revisions */}
         <RateChangeManager
           rateChanges={rateChanges}
           startYear={loanInputs.startYear || 2024}
@@ -162,7 +176,7 @@ export default function Home() {
           onChange={setRateChanges}
         />
 
-        {/* 4. Prepayment Manager */}
+        {/* 5. Prepayment Manager */}
         <PrepaymentManager
           prepayments={prepaymentRules}
           startYear={loanInputs.startYear || 2024}
@@ -170,10 +184,20 @@ export default function Home() {
           onChange={setPrepaymentRules}
         />
 
-        {/* 5. Interactive Analytics & Charts */}
+        {/* 6. What-If Opportunity Cost Simulator */}
+        <WhatIfSimulator
+          currentLoanAmount={loanInputs.loanAmount}
+          currentInterestRate={loanInputs.annualInterestRate}
+          currentTenureMonths={loanInputs.tenureMonths}
+        />
+
+        {/* 7. Income Tax Benefit Estimator */}
+        <TaxCalculatorCard rows={amortizationResult.rows} />
+
+        {/* 8. Interactive Analytics & Charts */}
         <LoanCharts rows={amortizationResult.rows} />
 
-        {/* 6. Amortization Schedule Table */}
+        {/* 9. Amortization Schedule Table */}
         <AmortizationTable
           rows={amortizationResult.rows}
           rateChanges={rateChanges}
@@ -182,7 +206,7 @@ export default function Home() {
           onUpdateActualPaymentLog={setActualPaymentLogs}
         />
 
-        {/* 7. Export & Backup Tools */}
+        {/* 10. Export & Backup Tools */}
         <ExportImport
           rows={amortizationResult.rows}
           loanState={{

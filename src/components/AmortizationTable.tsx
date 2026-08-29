@@ -8,8 +8,8 @@ interface AmortizationTableProps {
   rows: MonthlyScheduleRow[];
   rateChanges: InterestRateChange[];
   actualLogs: ActualPaymentLog[];
-  onUpdateRateChange: (rateChanges: InterestRateChange[]) => void;
-  onUpdateActualPaymentLog: (logs: ActualPaymentLog[]) => void;
+  onUpdateRateChange?: (rateChanges: InterestRateChange[]) => void;
+  onUpdateActualPaymentLog?: (logs: ActualPaymentLog[]) => void;
 }
 
 export function AmortizationTable({
@@ -66,7 +66,9 @@ export function AmortizationTable({
       (a, b) => a.monthIndex - b.monthIndex
     );
 
-    onUpdateActualPaymentLog(updated);
+    if (onUpdateActualPaymentLog) {
+      onUpdateActualPaymentLog(updated);
+    }
     setEditingLogMonth(null);
   };
 
@@ -83,7 +85,9 @@ export function AmortizationTable({
       (a, b) => a.monthIndex - b.monthIndex
     );
 
-    onUpdateRateChange(updated);
+    if (onUpdateRateChange) {
+      onUpdateRateChange(updated);
+    }
     setEditingRateMonth(null);
   };
 

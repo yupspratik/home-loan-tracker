@@ -17,6 +17,7 @@ model Loan {
   startYear             Int              @default(2024)
   startMonth            Int              @default(1)
   recalculationStrategy String           @default("REDUCE_TENURE")
+  shareToken            String?          @unique
   createdAt             DateTime         @default(now())
   updatedAt             DateTime         @updatedAt
   rateChanges           RateChange[]

@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+*.db
+*.db-journal
 
 # next.js
 /.next/

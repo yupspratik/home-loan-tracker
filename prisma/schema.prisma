@@ -1,0 +1,54 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Loan {
+  id                    String           @id @default(cuid())
+  name                  String           @default("My Home Loan")
+  loanAmount            Float
+  annualInterestRate    Float
+  tenureMonths          Int
+  startYear             Int              @default(2024)
+  startMonth            Int              @default(1)
+  recalculationStrategy String           @default("REDUCE_TENURE")
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  rateChanges           RateChange[]
+  prepayments           PrepaymentRule[]
+  paymentLogs           PaymentLog[]
+}
+
+model RateChange {
+  id            String   @id @default(cuid())
+  loanId        String
+  monthIndex    Int
+  newAnnualRate Float
+  loan          Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+  @@unique([loanId, monthIndex])
+}
+
+model PrepaymentRule {
+  id              String   @id @default(cuid())
+  loanId          String
+  type            String   // ONE_TIME, MONTHLY, QUARTERLY, HALF_YEARLY, YEARLY
+  amount          Float
+  startMonthIndex Int
+  endMonthIndex   Int?
+  loan            Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+}
+
+model PaymentLog {
+  id         String   @id @default(cuid())
+  loanId     String
+  monthIndex Int
+  paidEmi    Float
+  loan       Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+  @@unique([loanId, monthIndex])
+}

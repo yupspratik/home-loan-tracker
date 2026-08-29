@@ -96,6 +96,9 @@ export function calculateAmortization(
       originalPayoffLabel: formatMonthLabel(tenureMonths, startYear, startMonth).label,
       projectedPayoffLabel: formatMonthLabel(0, startYear, startMonth).label,
       currentBalance: 0,
+      currentAsOfLabel: 'N/A',
+      currentPaidPrincipalSoFar: 0,
+      currentPaidInterestSoFar: 0,
     };
     return { rows: [], summary: emptySummary };
   }
@@ -169,14 +172,14 @@ export function calculateAmortization(
     currentTenureRemaining = Math.max(1, tenureMonths - monthIndex + 1);
 
     // 2. Adjust EMI if needed
-    if (isRateChangedThisMonth || recalculationStrategy === 'REDUCE_EMI') {
+    if (recalculationStrategy === 'REDUCE_EMI') {
       activeScheduledEmi = calculateEmi(
         openingBalance,
         currentRate,
         currentTenureRemaining
       );
     } else {
-      // REDUCE_TENURE: Keep EMI same unless interest exceeds current EMI
+      // REDUCE_TENURE: Keep EMI constant (at initial calculated EMI), unless rate increased so much that interest exceeds current EMI
       const monthlyInterest = calculateMonthlyInterest(openingBalance, currentRate);
       if (activeScheduledEmi <= monthlyInterest) {
         // If interest increased beyond EMI, update EMI to minimum required
@@ -276,6 +279,44 @@ export function calculateAmortization(
     Math.max(0, baselineTotalInterest - actualTotalInterest)
   );
 
+  // --- Step 3: Compute Real-World Current Month Balance ---
+  const now = new Date();
+  const todayYear = now.getFullYear();
+  const todayMonth = now.getMonth() + 1; // 1-12 (e.g. 8 for Aug)
+
+  const currentMonthIndex = (todayYear - startYear) * 12 + (todayMonth - startMonth) + 1;
+
+  let currentBalance = 0;
+  let currentAsOfLabel = '';
+  let currentPaidPrincipalSoFar = 0;
+  let currentPaidInterestSoFar = 0;
+
+  if (currentMonthIndex < 1) {
+    // Future loan start date
+    currentBalance = loanAmount;
+    currentAsOfLabel = `Starts ${formatMonthLabel(1, startYear, startMonth).label}`;
+    currentPaidPrincipalSoFar = 0;
+    currentPaidInterestSoFar = 0;
+  } else if (currentMonthIndex > rows.length) {
+    // Fully paid off already
+    currentBalance = 0;
+    currentAsOfLabel = `Paid Off (${rows.length > 0 ? rows[rows.length - 1].monthLabel : ''})`;
+    currentPaidPrincipalSoFar = loanAmount;
+    currentPaidInterestSoFar = roundToTwoDecimals(actualTotalInterest);
+  } else {
+    // Active loan month as of today's date
+    const currentRow = rows[currentMonthIndex - 1];
+    currentBalance = currentRow.closingBalance;
+    currentAsOfLabel = `As of ${currentRow.monthLabel} (Month ${currentRow.monthIndex})`;
+
+    for (let i = 0; i < currentMonthIndex; i++) {
+      currentPaidPrincipalSoFar += rows[i].totalPrincipalPaid;
+      currentPaidInterestSoFar += rows[i].interestPaid;
+    }
+    currentPaidPrincipalSoFar = roundToTwoDecimals(currentPaidPrincipalSoFar);
+    currentPaidInterestSoFar = roundToTwoDecimals(currentPaidInterestSoFar);
+  }
+
   const summary: LoanSummary = {
     initialLoanAmount: loanAmount,
     originalInterestRate: annualInterestRate,
@@ -289,7 +330,10 @@ export function calculateAmortization(
     totalPrepaymentsMade: roundToTwoDecimals(totalPrepaymentsMade),
     originalPayoffLabel: baselinePayoffLabel,
     projectedPayoffLabel,
-    currentBalance: rows.length > 0 ? rows[rows.length - 1].closingBalance : 0,
+    currentBalance,
+    currentAsOfLabel,
+    currentPaidPrincipalSoFar,
+    currentPaidInterestSoFar,
   };
 
   return { rows, summary };

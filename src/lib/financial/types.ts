@@ -61,7 +61,10 @@ export interface LoanSummary {
   totalPrepaymentsMade: number;
   originalPayoffLabel: string;
   projectedPayoffLabel: string;
-  currentBalance: number;
+  currentBalance: number; // Balance left as of current real-world month
+  currentAsOfLabel: string; // e.g. "As of Aug 2026 (Month 32)"
+  currentPaidPrincipalSoFar: number;
+  currentPaidInterestSoFar: number;
 }
 
 export interface AmortizationResult {

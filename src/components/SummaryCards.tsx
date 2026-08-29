@@ -1,7 +1,7 @@
 'use client';
 
 import { LoanSummary } from '@/lib/financial/types';
-import { Calendar, CheckCircle2, DollarSign, Percent, TrendingDown, Wallet } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock, DollarSign, Percent, TrendingDown, Wallet } from 'lucide-react';
 
 interface SummaryCardsProps {
   summary: LoanSummary;
@@ -18,11 +18,17 @@ export function SummaryCards({ summary, scheduledEmi }: SummaryCardsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      {/* Current Balance & Loan Amount */}
+      {/* Current Balance & As-Of Date */}
       <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-slate-700 transition-all">
         <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all" />
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium text-slate-400">Balance Left</span>
+          <div>
+            <span className="text-sm font-medium text-slate-400 block">Balance Left</span>
+            <span className="text-[10px] font-semibold text-blue-400 flex items-center gap-1 mt-0.5">
+              <Clock className="w-3 h-3" />
+              {summary.currentAsOfLabel}
+            </span>
+          </div>
           <div className="p-2.5 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400">
             <Wallet className="w-5 h-5" />
           </div>

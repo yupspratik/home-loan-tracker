@@ -43,6 +43,39 @@ describe('Amortization Calculator Engine', () => {
     expect(result.rows[12].interestPaid).toBe(expectedInterestMonth13);
   });
 
+  it('keeps scheduled EMI constant when interest rate reduces under REDUCE_TENURE mode', () => {
+    // Interest rate reduces from 10% to 8% at month 13
+    const rateChanges = [{ monthIndex: 13, newAnnualRate: 8 }];
+    const result = calculateAmortization(
+      { ...baseInput, recalculationStrategy: 'REDUCE_TENURE' },
+      rateChanges
+    );
+
+    const initialEmi = result.rows[0].scheduledEmi;
+    const month13Emi = result.rows[12].scheduledEmi;
+
+    // EMI should remain constant at initial calculated EMI
+    expect(month13Emi).toBe(initialEmi);
+
+    // Rate reduction with constant EMI should reduce overall tenure
+    expect(result.summary.actualTenureMonths).toBeLessThan(120);
+    expect(result.summary.monthsSaved).toBeGreaterThan(0);
+  });
+
+  it('computes current date balance based on real-world elapsed months', () => {
+    const result = calculateAmortization({
+      loanAmount: 5000000,
+      annualInterestRate: 8.5,
+      tenureMonths: 240,
+      startYear: 2024,
+      startMonth: 1,
+    });
+
+    expect(result.summary.currentBalance).toBeGreaterThan(0);
+    expect(result.summary.currentBalance).toBeLessThan(5000000);
+    expect(result.summary.currentAsOfLabel).toContain('As of');
+  });
+
   it('calculates prepayment rules across frequencies correctly', () => {
     const rules: PrepaymentRule[] = [
       { id: '1', type: 'ONE_TIME', amount: 50000, startMonthIndex: 5 },

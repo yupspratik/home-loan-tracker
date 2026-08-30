@@ -67,8 +67,8 @@ export function LoanProvider({ children }: { children: React.ReactNode }) {
 
   // Load state or apply demo data
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
     });
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {

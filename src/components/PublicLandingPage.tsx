@@ -15,7 +15,7 @@ export function PublicLandingPage({ onTryDemo }: PublicLandingPageProps) {
   const handleGoogleLogin = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
   };
 
@@ -57,12 +57,6 @@ export function PublicLandingPage({ onTryDemo }: PublicLandingPageProps) {
             >
               Try Interactive Demo
             </button>
-            <button
-              onClick={handleGoogleLogin}
-              className="px-4 py-2.5 bg-blue-400 text-black font-bold text-sm bento-button flex items-center gap-2"
-            >
-              Sign In <span className="hidden sm:inline">with Google</span>
-            </button>
           </div>
         </div>
       </header>
@@ -70,7 +64,7 @@ export function PublicLandingPage({ onTryDemo }: PublicLandingPageProps) {
       {/* Hero Section */}
       <section className="pt-20 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center relative">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E0F2FE] border-2 border-[var(--border-color)] text-black font-bold text-xs mb-8 shadow-[2px_2px_0px_0px_var(--border-color)]">
-          <span>Enterprise SaaS Loan Management & Wealth Simulator</span>
+          <span>Loan Management & Wealth Simulator</span>
         </div>
 
         <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-slate-900 dark:text-white max-w-5xl mx-auto leading-tight mb-8">

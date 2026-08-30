@@ -2,30 +2,17 @@
 
 import { supabase } from '@/lib/supabaseClient';
 import { LogIn, LogOut, User, X } from 'lucide-react';
+import { useLoan } from '@/context/LoanContext';
 import { useEffect, useState } from 'react';
 
 export function AuthModal() {
-  const [user, setUser] = useState<any>(null);
+  const { user, setLoanInputs, setRateChanges, setPrepaymentRules, setActualPaymentLogs } = useLoan();
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isMagicLink, setIsMagicLink] = useState(true);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; isError?: boolean } | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
-
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
 
   // Handle ESC key dismiss
   useEffect(() => {

@@ -6,21 +6,31 @@ import {
   simulateBalanceTransfer,
   simulatePrepayVsInvest,
 } from '@/lib/financial/simulator';
+import { InterestRateChange } from '@/lib/financial/types';
 import { ArrowRight, Calculator, CheckCircle2, DollarSign, HelpCircle, Layers, Lightbulb, Percent, RefreshCw, Scale, TrendingUp } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface WhatIfSimulatorProps {
   currentLoanAmount: number;
   currentInterestRate: number;
   currentTenureMonths: number;
+  rateChanges?: InterestRateChange[];
 }
 
 export function WhatIfSimulator({
   currentLoanAmount,
   currentInterestRate,
   currentTenureMonths,
+  rateChanges = [],
 }: WhatIfSimulatorProps) {
   const [activeTab, setActiveTab] = useState<'PREPAY_VS_INVEST' | 'BALANCE_TRANSFER'>('PREPAY_VS_INVEST');
+
+  // Compute latest active interest rate from rate revisions
+  const latestActiveRate = useMemo(() => {
+    if (!rateChanges || rateChanges.length === 0) return currentInterestRate || 8.5;
+    const sorted = [...rateChanges].sort((a, b) => a.monthIndex - b.monthIndex);
+    return sorted[sorted.length - 1].newAnnualRate;
+  }, [currentInterestRate, rateChanges]);
 
   // Tab 1 state
   const [prepaymentAmount, setPrepaymentAmount] = useState<number>(500000);
@@ -30,21 +40,31 @@ export function WhatIfSimulator({
 
   // Tab 2 state
   const [transferBalance, setTransferBalance] = useState<number>(currentLoanAmount || 4000000);
-  const [transferCurrentRate, setTransferCurrentRate] = useState<number>(currentInterestRate || 8.5);
-  const [transferNewRate, setTransferNewRate] = useState<number>(8.0);
+  const [transferCurrentRate, setTransferCurrentRate] = useState<number>(latestActiveRate);
+  const [transferNewRate, setTransferNewRate] = useState<number>(Math.max(5, latestActiveRate - 0.5));
   const [transferTenureMonths, setTransferTenureMonths] = useState<number>(currentTenureMonths || 180);
   const [transferFeePercent, setTransferFeePercent] = useState<number>(0.5);
   const [transferFlatFee, setTransferFlatFee] = useState<number>(2500);
+
+  // Sync state when latestActiveRate or currentLoanAmount updates
+  useEffect(() => {
+    setTransferCurrentRate(latestActiveRate);
+    setTransferNewRate(Math.max(5, latestActiveRate - 0.5));
+  }, [latestActiveRate]);
+
+  useEffect(() => {
+    if (currentLoanAmount > 0) setTransferBalance(currentLoanAmount);
+  }, [currentLoanAmount]);
 
   const prepayResult = useMemo(() => {
     return simulatePrepayVsInvest({
       prepaymentAmount,
       isMonthlySip,
-      loanInterestRate: currentInterestRate || 8.5,
+      loanInterestRate: latestActiveRate,
       expectedInvestmentRoi: expectedRoi,
       horizonYears,
     });
-  }, [prepaymentAmount, isMonthlySip, currentInterestRate, expectedRoi, horizonYears]);
+  }, [prepaymentAmount, isMonthlySip, latestActiveRate, expectedRoi, horizonYears]);
 
   const transferResult = useMemo(() => {
     return simulateBalanceTransfer({

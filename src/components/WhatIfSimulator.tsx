@@ -209,9 +209,9 @@ export function WhatIfSimulator({
           {/* Comparison Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Option A: Prepay Loan */}
-            <div className="bento-card p-6 bg-[#D1FAE5]">
+            <div className="bento-card p-6 bg-emerald-100 dark:bg-emerald-950">
               <div className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider mb-3">
-                Option A: Prepay Home Loan ({latestActiveRate}%)
+                Option A: Prepay Loan ({latestActiveRate}%)
               </div>
               <div className="text-4xl font-black text-slate-900 dark:text-white mb-2">
                 {formatCurrency(prepayResult.guaranteedInterestSavedFromPrepayment)}
@@ -223,7 +223,7 @@ export function WhatIfSimulator({
             </div>
 
             {/* Option B: Invest in Market */}
-            <div className="bento-card p-6 bg-[#E0F2FE]">
+            <div className="bento-card p-6 bg-sky-100 dark:bg-sky-900">
               <div className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider mb-3">
                 Option B: Invest in {ASSET_CLASSES[selectedAsset].name} ({expectedRoi}%)
               </div>

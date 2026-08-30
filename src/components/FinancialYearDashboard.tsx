@@ -101,7 +101,7 @@ export function FinancialYearDashboard({ rows }: FinancialYearDashboardProps) {
           {/* Key Metric Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {/* Lumpsum */}
-            <div className="bento-card p-5 bg-[#D1FAE5]">
+            <div className="bento-card p-5 bg-emerald-100 dark:bg-emerald-950">
               <span className="text-sm font-bold text-slate-900 dark:text-white block mb-2">
                 Lump Sum Prepayments
               </span>
@@ -112,7 +112,7 @@ export function FinancialYearDashboard({ rows }: FinancialYearDashboardProps) {
             </div>
 
             {/* Excess Monthly */}
-            <div className="bento-card p-5 bg-[#E0F2FE]">
+            <div className="bento-card p-5 bg-sky-100 dark:bg-sky-900">
               <span className="text-sm font-bold text-slate-900 dark:text-white block mb-2">
                 Excess EMI Prepayments
               </span>
@@ -123,7 +123,7 @@ export function FinancialYearDashboard({ rows }: FinancialYearDashboardProps) {
             </div>
 
             {/* Interest Paid */}
-            <div className="bento-card p-5 bg-[#FFE4E6]">
+            <div className="bento-card p-5 bg-rose-100 dark:bg-rose-950">
               <span className="text-sm font-bold text-slate-900 dark:text-white block mb-2">
                 Total FY Interest Paid
               </span>
@@ -134,7 +134,7 @@ export function FinancialYearDashboard({ rows }: FinancialYearDashboardProps) {
             </div>
 
             {/* Principal Paid */}
-            <div className="bento-card p-5 bg-[#FEF08A]">
+            <div className="bento-card p-5 bg-yellow-200 dark:bg-yellow-900">
               <span className="text-sm font-bold text-slate-900 dark:text-white block mb-2">
                 Total FY Principal Paid
               </span>

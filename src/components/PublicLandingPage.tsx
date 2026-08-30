@@ -74,7 +74,7 @@ export function PublicLandingPage({ onTryDemo }: PublicLandingPageProps) {
         </div>
 
         <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-slate-900 dark:text-white max-w-5xl mx-auto leading-tight mb-8">
-          Take Complete Control of Your Home Loan Repayment
+          Take Complete Control of Your Loan Repayment
         </h1>
 
         <p className="text-lg sm:text-xl font-medium text-slate-700 dark:text-slate-300 max-w-3xl mx-auto mb-12 leading-relaxed">
@@ -144,46 +144,46 @@ export function PublicLandingPage({ onTryDemo }: PublicLandingPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4">
-              Common Home Loan Dilemmas Solved
+              Common Loan Dilemmas Solved
             </h2>
             <p className="text-base font-bold text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Why thousands of homeowners use our repayment intelligence engine.
+              Why thousands of users trust our repayment intelligence engine.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bento-card p-8 bg-[#FFE4E6]">
-              <h3 className="font-black text-black text-lg mb-3">
+            <div className="bento-card p-8 bg-rose-100 dark:bg-rose-950">
+              <h3 className="font-black text-slate-900 dark:text-white text-lg mb-3">
                 1. Silent Rate Shifts
               </h3>
-              <p className="text-sm font-medium text-slate-800 leading-relaxed">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-300 leading-relaxed">
                 Floating interest rate changes quietly extend your tenure by 5 to 10 years without warning. Track every rate revision dynamically.
               </p>
             </div>
 
-            <div className="bento-card p-8 bg-[#FEF08A]">
-              <h3 className="font-black text-black text-lg mb-3">
+            <div className="bento-card p-8 bg-yellow-200 dark:bg-yellow-900">
+              <h3 className="font-black text-slate-900 dark:text-white text-lg mb-3">
                 2. Prepayment Strategy
               </h3>
-              <p className="text-sm font-medium text-slate-800 leading-relaxed">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-300 leading-relaxed">
                 Wondering if paying ₹10,000 extra monthly or ₹1 Lakh annually saves more lakhs in interest? Test all prepayment frequencies instantly.
               </p>
             </div>
 
-            <div className="bento-card p-8 bg-[#E0F2FE]">
-              <h3 className="font-black text-black text-lg mb-3">
+            <div className="bento-card p-8 bg-sky-100 dark:bg-sky-900">
+              <h3 className="font-black text-slate-900 dark:text-white text-lg mb-3">
                 3. Prepay vs. Invest
               </h3>
-              <p className="text-sm font-medium text-slate-800 leading-relaxed">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-300 leading-relaxed">
                 Should you prepay your 8.5% loan or invest in FDs, Stocks, Gold, or Mutual Funds? Calculate exact net wealth gain before deciding.
               </p>
             </div>
 
-            <div className="bento-card p-8 bg-[#D1FAE5]">
-              <h3 className="font-black text-black text-lg mb-3">
+            <div className="bento-card p-8 bg-emerald-100 dark:bg-emerald-950">
+              <h3 className="font-black text-slate-900 dark:text-white text-lg mb-3">
                 4. Income Tax Deductions
               </h3>
-              <p className="text-sm font-medium text-slate-800 leading-relaxed">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-300 leading-relaxed">
                 Struggling to compute Section 24b and Section 80C deductions for tax returns? Get formatted Financial Year (Apr-Mar) reports.
               </p>
             </div>

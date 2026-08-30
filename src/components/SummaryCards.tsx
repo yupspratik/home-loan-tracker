@@ -20,10 +20,10 @@ export function SummaryCards({ summary, scheduledEmi }: SummaryCardsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="summary-cards">
       {/* 1. Balance Left (Real-World As Of Current Month) */}
-      <div className="bento-card p-5 bg-[#E0F2FE]">
+      <div className="bento-card p-5 bg-sky-100 dark:bg-sky-900">
         <div className="flex flex-col items-start gap-2 mb-3">
           <span className="text-sm font-bold text-slate-900 dark:text-white">Balance Left to Pay</span>
-          <span className="text-xs px-2.5 py-1 rounded-full bg-slate-900 dark:bg-white text-white dark:text-black font-bold border-2 border-[var(--border-color)] shadow-sm">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-slate-900 dark:bg-slate-700 text-white font-bold border-2 border-[var(--border-color)] shadow-sm">
             {summary.currentAsOfLabel}
           </span>
         </div>
@@ -36,7 +36,7 @@ export function SummaryCards({ summary, scheduledEmi }: SummaryCardsProps) {
       </div>
 
       {/* 2. Monthly EMI */}
-      <div className="bento-card p-5 bg-[#FEF08A]">
+      <div className="bento-card p-5 bg-yellow-200 dark:bg-yellow-900">
         <div className="text-sm font-bold text-slate-900 dark:text-white mb-3">
           Scheduled Monthly EMI
         </div>
@@ -49,7 +49,7 @@ export function SummaryCards({ summary, scheduledEmi }: SummaryCardsProps) {
       </div>
 
       {/* 3. Interest Saved via Prepayment */}
-      <div className="bento-card p-5 bg-[#D1FAE5]">
+      <div className="bento-card p-5 bg-emerald-100 dark:bg-emerald-950">
         <div className="text-sm font-bold text-slate-900 dark:text-white mb-3">
           Interest Saved
         </div>
@@ -62,7 +62,7 @@ export function SummaryCards({ summary, scheduledEmi }: SummaryCardsProps) {
       </div>
 
       {/* 4. Projected Payoff Target Date */}
-      <div className="bento-card p-5 bg-[#FFE4E6]">
+      <div className="bento-card p-5 bg-rose-100 dark:bg-rose-950">
         <div className="text-sm font-bold text-slate-900 dark:text-white mb-3">
           Projected Payoff Date
         </div>

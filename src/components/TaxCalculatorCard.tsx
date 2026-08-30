@@ -52,7 +52,7 @@ export function TaxCalculatorCard({ rows }: TaxCalculatorCardProps) {
       {/* Current FY Quick Cards */}
       <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Sec 24b Interest */}
-        <div className="bento-card p-5 bg-[#FFE4E6]">
+        <div className="bento-card p-5 bg-rose-100 dark:bg-rose-950">
           <div className="text-sm font-bold text-slate-900 dark:text-white mb-2 flex items-center justify-between">
             <span>Sec 24b Interest Deduction</span>
             <span className="text-xs text-slate-800 dark:text-slate-300 font-black">Max ₹2L</span>
@@ -66,7 +66,7 @@ export function TaxCalculatorCard({ rows }: TaxCalculatorCardProps) {
         </div>
 
         {/* Sec 80C Principal */}
-        <div className="bento-card p-5 bg-[#D1FAE5]">
+        <div className="bento-card p-5 bg-emerald-100 dark:bg-emerald-950">
           <div className="text-sm font-bold text-slate-900 dark:text-white mb-2 flex items-center justify-between">
             <span>Sec 80C Principal Deduction</span>
             <span className="text-xs text-slate-800 dark:text-slate-300 font-black">Max ₹1.5L</span>
@@ -80,7 +80,7 @@ export function TaxCalculatorCard({ rows }: TaxCalculatorCardProps) {
         </div>
 
         {/* Total Old Regime Deduction */}
-        <div className="bento-card p-5 bg-[#E0F2FE]">
+        <div className="bento-card p-5 bg-sky-100 dark:bg-sky-900">
           <div className="text-sm font-bold text-slate-900 dark:text-white mb-2">Total Eligible Deduction</div>
           <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
             {formatCurrency(currentFyTax.totalOldRegimeDeduction)}
@@ -89,7 +89,7 @@ export function TaxCalculatorCard({ rows }: TaxCalculatorCardProps) {
         </div>
 
         {/* Est. Tax Cash Saved */}
-        <div className="bento-card p-5 bg-[#FEF08A]">
+        <div className="bento-card p-5 bg-yellow-200 dark:bg-yellow-900">
           <div className="text-sm font-bold text-slate-900 dark:text-white mb-2">Est. Tax Cash Saved (30% Slab)</div>
           <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
             {formatCurrency(currentFyTax.estimatedTaxSaved30Percent)}

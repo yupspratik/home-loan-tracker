@@ -65,7 +65,6 @@ export function AuthModal() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    setUser(null);
   };
 
   if (user) {

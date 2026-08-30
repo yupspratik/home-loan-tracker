@@ -3,7 +3,9 @@
 import { LoanCharts } from '@/components/LoanCharts';
 import { LoanForm } from '@/components/LoanForm';
 import { Navbar } from '@/components/Navbar';
+import { OnboardingTour } from '@/components/OnboardingTour';
 import { PrepaymentManager } from '@/components/PrepaymentManager';
+import { PublicLandingPage } from '@/components/PublicLandingPage';
 import { RateChangeManager } from '@/components/RateChangeManager';
 import { SummaryCards } from '@/components/SummaryCards';
 import { calculateAmortization } from '@/lib/financial/calculator';
@@ -19,18 +21,30 @@ import {
   SavedLoanState,
   saveLoanStateToStorage,
 } from '@/lib/storage';
+import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isDbSynced, setIsDbSynced] = useState<boolean>(false);
+  const [user, setUser] = useState<any>(null);
+  const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
+
   const [loanInputs, setLoanInputs] = useState<LoanInputs>(DEFAULT_LOAN_STATE.inputs);
   const [rateChanges, setRateChanges] = useState<InterestRateChange[]>(DEFAULT_LOAN_STATE.rateChanges);
   const [prepaymentRules, setPrepaymentRules] = useState<PrepaymentRule[]>(DEFAULT_LOAN_STATE.prepaymentRules);
   const [actualPaymentLogs, setActualPaymentLogs] = useState<ActualPaymentLog[]>(DEFAULT_LOAN_STATE.actualPaymentLogs);
 
-  // Load saved state on client mount
+  // Check auth & load saved state
   useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
     const saved = loadLoanStateFromStorage();
     setLoanInputs(saved.inputs);
     setRateChanges(saved.rateChanges || []);
@@ -53,6 +67,10 @@ export default function Home() {
         }
       })
       .catch((err) => console.log('Browser storage mode active:', err));
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   // Auto-save changes to local storage & Supabase API
@@ -90,7 +108,7 @@ export default function Home() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-400">
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
           <span>Loading Home Loan Tracker...</span>
@@ -99,18 +117,20 @@ export default function Home() {
     );
   }
 
+  // Render Public Marketing Landing Page for unauthenticated visitors unless demo mode is triggered
+  if (!user && !isDemoMode) {
+    return <PublicLandingPage onTryDemo={() => setIsDemoMode(true)} />;
+  }
+
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-blue-500 selection:text-white pb-16">
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500 selection:text-white pb-16">
+      {/* Onboarding Tour Guide */}
+      <OnboardingTour />
+
       {/* Navbar Menu Header */}
       <Navbar />
 
-      {/* Dynamic Background Glow */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -right-40 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         {/* 1. Dashboard Key Summary Metrics */}
         <SummaryCards summary={amortizationResult.summary} scheduledEmi={scheduledEmi} />
 

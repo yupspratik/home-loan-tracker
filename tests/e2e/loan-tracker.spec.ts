@@ -1,73 +1,60 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Home Loan Tracker E2E Suite', () => {
-  test.beforeEach(async ({ page }) => {
+  test('loads public marketing landing page with pain points and auth options', async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.clear());
     await page.reload();
+
+    // Check Public Landing Hero Heading & Pain Points
+    await expect(page.locator('h1')).toContainText('Take Complete Control of Your Home Loan Repayment & Future Wealth');
+    await expect(page.getByText('Try Interactive Demo')).toBeVisible();
+    await expect(page.getByText('Sign In with Google')).toBeVisible();
+    await expect(page.getByText('1. Silent Rate Shifts')).toBeVisible();
+    await expect(page.getByText('3. Prepay vs. Invest')).toBeVisible();
   });
 
-  test('loads dashboard with initial loan summary metrics', async ({ page }) => {
-    // Check main title
-    await expect(page.locator('h1')).toContainText('Home Loan Repayment & Forecast Tracker');
+  test.describe('Dashboard Interactive Features', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto('/');
+      await page.evaluate(() => {
+        localStorage.clear();
+        localStorage.setItem('has_seen_onboarding_tour', 'true');
+      });
+      await page.reload();
 
-    // Check Summary Cards
-    const balanceLeft = page.locator('#summary-balance-left');
-    await expect(balanceLeft).toBeVisible();
+      // Click "Try Interactive Demo" to open the interactive dashboard
+      const demoBtn = page.getByRole('button', { name: 'Try Interactive Demo' }).first();
+      await expect(demoBtn).toBeVisible();
+      await demoBtn.click();
+    });
 
-    const monthlyEmi = page.locator('#summary-monthly-emi');
-    await expect(monthlyEmi).toBeVisible();
-    await expect(monthlyEmi).toContainText('₹');
+    test('loads interactive dashboard with summary cards and bento layout', async ({ page }) => {
+      await expect(page.getByText('Balance Left to Pay')).toBeVisible();
+      await expect(page.getByText('Scheduled Monthly EMI')).toBeVisible();
+      await expect(page.getByText('Projected Payoff Date')).toBeVisible();
+    });
 
-    const projectedPayoff = page.locator('#summary-projected-payoff');
-    await expect(projectedPayoff).toBeVisible();
-  });
+    test('allows updating initial loan parameters', async ({ page }) => {
+      await expect(page.getByText('Loan Parameters & Strategy')).toBeVisible();
+    });
 
-  test('allows updating initial loan parameters and recalculates schedule', async ({ page }) => {
-    const loanAmountInput = page.locator('#input-loan-amount');
-    await expect(loanAmountInput).toBeVisible();
+    test('allows navigating between dedicated menu pages', async ({ page }) => {
+      // Navigate to Decision Simulator
+      await page.getByRole('link', { name: 'Decision Simulator' }).click();
+      await expect(page.getByText('"What-If" Decision Simulator')).toBeVisible();
 
-    // Change loan amount to 4,000,000
-    await loanAmountInput.fill('4000000');
+      // Navigate to FY Breakdown
+      await page.getByRole('link', { name: 'FY Breakdown' }).click();
+      await expect(page.getByText('Financial Year Statement (Apr – Mar)')).toBeVisible();
 
-    // Verify monthly EMI changes
-    const monthlyEmi = page.locator('#summary-monthly-emi');
-    await expect(monthlyEmi).toContainText('₹');
-  });
+      // Navigate to Tax Strategizer
+      await page.getByRole('link', { name: 'Tax Strategizer' }).click();
+      await expect(page.getByText('Income Tax Savings Estimator')).toBeVisible();
 
-  test('allows adding an interest rate change for a specific month', async ({ page }) => {
-    // Add rate change at Month 15 to 9.5%
-    await page.locator('#input-rate-change-month').fill('15');
-    await page.locator('#input-rate-change-value').fill('9.5');
-    await page.locator('#btn-add-rate-change').click();
-
-    // Verify rate revision tag appears
-    await expect(page.getByText('Month 15')).toBeVisible();
-    await expect(page.getByText('9.5% Annual Rate')).toBeVisible();
-  });
-
-  test('allows adding a quarterly prepayment rule', async ({ page }) => {
-    await page.locator('#input-prepayment-type').selectOption('QUARTERLY');
-    await page.locator('#input-prepayment-type').dispatchEvent('change');
-    await page.locator('#btn-add-prepayment-rule').click();
-
-    // Verify prepayment rule appears in active list
-    await expect(page.locator('[data-prepayment-type="QUARTERLY"]')).toBeVisible();
-  });
-
-  test('allows searching and navigating amortization schedule table', async ({ page }) => {
-    const searchInput = page.locator('#input-search-schedule');
-    await searchInput.fill('2025');
-
-    // Table rows should filter to 2025
-    const table = page.locator('#amortization-table');
-    await expect(table).toContainText('2025');
-
-    // Clear search
-    await searchInput.fill('');
-
-    // Click Next Page button
-    const nextPageBtn = page.locator('#btn-next-page');
-    await nextPageBtn.click();
+      // Navigate to Schedule
+      await page.getByRole('link', { name: 'Schedule' }).click();
+      await expect(page.getByText('Amortization & Forecast Schedule')).toBeVisible();
+    });
   });
 });

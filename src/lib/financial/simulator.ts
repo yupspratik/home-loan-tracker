@@ -1,9 +1,35 @@
+export type AssetClass =
+  | 'MUTUAL_FUND'
+  | 'EQUITY'
+  | 'FIXED_DEPOSIT'
+  | 'RECURRING_DEPOSIT'
+  | 'GOLD'
+  | 'DEBT_BOND'
+  | 'CUSTOM';
+
+export interface AssetClassConfig {
+  id: AssetClass;
+  name: string;
+  defaultRoi: number;
+}
+
+export const ASSET_CLASSES: Record<AssetClass, AssetClassConfig> = {
+  MUTUAL_FUND: { id: 'MUTUAL_FUND', name: 'Mutual Funds / Index Funds', defaultRoi: 12.0 },
+  EQUITY: { id: 'EQUITY', name: 'Direct Stocks / Equity', defaultRoi: 15.0 },
+  FIXED_DEPOSIT: { id: 'FIXED_DEPOSIT', name: 'Fixed Deposit (FD)', defaultRoi: 7.0 },
+  RECURRING_DEPOSIT: { id: 'RECURRING_DEPOSIT', name: 'Recurring Deposit (RD)', defaultRoi: 7.2 },
+  GOLD: { id: 'GOLD', name: 'Gold / Sovereign Gold Bonds (SGB)', defaultRoi: 9.0 },
+  DEBT_BOND: { id: 'DEBT_BOND', name: 'Corporate & Govt Bonds', defaultRoi: 8.0 },
+  CUSTOM: { id: 'CUSTOM', name: 'Custom Investment Return', defaultRoi: 10.0 },
+};
+
 export interface PrepayVsInvestInput {
   prepaymentAmount: number;
   isMonthlySip: boolean; // true = monthly extra, false = lump sum
   loanInterestRate: number; // e.g. 8.5%
   expectedInvestmentRoi: number; // e.g. 12%
   horizonYears: number; // e.g. 10 years
+  assetClass?: AssetClass;
 }
 
 export interface PrepayVsInvestResult {
@@ -17,7 +43,7 @@ export interface PrepayVsInvestResult {
 }
 
 export function simulatePrepayVsInvest(input: PrepayVsInvestInput): PrepayVsInvestResult {
-  const { prepaymentAmount, isMonthlySip, loanInterestRate, expectedInvestmentRoi, horizonYears } = input;
+  const { prepaymentAmount, isMonthlySip, loanInterestRate, expectedInvestmentRoi, horizonYears, assetClass = 'MUTUAL_FUND' } = input;
   const months = horizonYears * 12;
 
   let totalPrepaymentInvested = 0;
@@ -27,9 +53,10 @@ export function simulatePrepayVsInvest(input: PrepayVsInvestInput): PrepayVsInve
   const monthlyLoanRate = loanInterestRate / 100 / 12;
   const monthlyInvRate = expectedInvestmentRoi / 100 / 12;
 
+  const assetName = ASSET_CLASSES[assetClass]?.name || 'Investment';
+
   if (isMonthlySip) {
     totalPrepaymentInvested = prepaymentAmount * months;
-    // Compound interest for SIP: FV = P * [((1+r)^n - 1)/r] * (1+r)
     if (monthlyInvRate > 0) {
       investmentFutureValue =
         prepaymentAmount *
@@ -38,7 +65,6 @@ export function simulatePrepayVsInvest(input: PrepayVsInvestInput): PrepayVsInve
       investmentFutureValue = totalPrepaymentInvested;
     }
 
-    // Compound interest saved from paying extra loan principal
     if (monthlyLoanRate > 0) {
       const loanFvOfPayments =
         prepaymentAmount *
@@ -60,15 +86,15 @@ export function simulatePrepayVsInvest(input: PrepayVsInvestInput): PrepayVsInve
   let recommendation: 'PREPAY' | 'INVEST' | 'EQUIVALENT' = 'EQUIVALENT';
   let recommendationReason = '';
 
-  if (expectedInvestmentRoi > loanInterestRate + 1.5) {
+  if (expectedInvestmentRoi > loanInterestRate + 1.0) {
     recommendation = 'INVEST';
-    recommendationReason = `Investing at expected ${expectedInvestmentRoi}% p.a. generates higher estimated wealth (+₹${Math.round(Math.max(0, netInvestmentGainOverPrepayment)).toLocaleString('en-IN')}) than guaranteed ${loanInterestRate}% interest savings.`;
+    recommendationReason = `Investing in ${assetName} at expected ${expectedInvestmentRoi}% p.a. generates higher estimated wealth (+₹${Math.round(Math.max(0, netInvestmentGainOverPrepayment)).toLocaleString('en-IN')}) than guaranteed ${loanInterestRate}% interest savings.`;
   } else if (expectedInvestmentRoi < loanInterestRate) {
     recommendation = 'PREPAY';
-    recommendationReason = `Prepaying your ${loanInterestRate}% home loan offers a guaranteed risk-free return of ${loanInterestRate}%, beating expected ${expectedInvestmentRoi}% investment return.`;
+    recommendationReason = `Prepaying your ${loanInterestRate}% home loan offers a guaranteed risk-free return of ${loanInterestRate}%, beating expected ${expectedInvestmentRoi}% return from ${assetName}.`;
   } else {
     recommendation = 'EQUIVALENT';
-    recommendationReason = `Returns are comparable. Prepaying offers guaranteed debt reduction, while investing provides liquidity.`;
+    recommendationReason = `Returns are comparable. Prepaying offers guaranteed debt reduction, while ${assetName} provides portfolio liquidity.`;
   }
 
   return {

@@ -71,43 +71,42 @@ export async function POST(req: NextRequest) {
     const existingLoan = await db.loan.findFirst();
 
     if (existingLoan) {
-      // Clear old nested relations and recreate to sync state cleanly
-      await db.$transaction([
-        db.rateChange.deleteMany({ where: { loanId: existingLoan.id } }),
-        db.prepaymentRule.deleteMany({ where: { loanId: existingLoan.id } }),
-        db.paymentLog.deleteMany({ where: { loanId: existingLoan.id } }),
-        db.loan.update({
-          where: { id: existingLoan.id },
-          data: {
-            loanAmount: inputs.loanAmount,
-            annualInterestRate: inputs.annualInterestRate,
-            tenureMonths: inputs.tenureMonths,
-            startYear: inputs.startYear || 2024,
-            startMonth: inputs.startMonth || 1,
-            recalculationStrategy: inputs.recalculationStrategy || 'REDUCE_TENURE',
-            rateChanges: {
-              create: rateChanges.map((rc: any) => ({
-                monthIndex: rc.monthIndex,
-                newAnnualRate: rc.newAnnualRate,
-              })),
-            },
-            prepayments: {
-              create: prepaymentRules.map((pr: any) => ({
-                type: pr.type,
-                amount: pr.amount,
-                startMonthIndex: pr.startMonthIndex,
-                endMonthIndex: pr.endMonthIndex || null,
-              })),
-            },
-            paymentLogs: {
-              create: actualPaymentLogs.map((pl: any) => ({
-                monthIndex: pl.monthIndex,
-                paidEmi: pl.paidEmi,
-              })),
-            },
+      // Clear old nested relations first to avoid unique constraint conflicts
+      await db.rateChange.deleteMany({ where: { loanId: existingLoan.id } });
+      await db.prepaymentRule.deleteMany({ where: { loanId: existingLoan.id } });
+      await db.paymentLog.deleteMany({ where: { loanId: existingLoan.id } });
+
+      await db.loan.update({
+        where: { id: existingLoan.id },
+        data: {
+          loanAmount: inputs.loanAmount,
+          annualInterestRate: inputs.annualInterestRate,
+          tenureMonths: inputs.tenureMonths,
+          startYear: inputs.startYear || 2024,
+          startMonth: inputs.startMonth || 1,
+          recalculationStrategy: inputs.recalculationStrategy || 'REDUCE_TENURE',
+          rateChanges: {
+            create: rateChanges.map((rc: any) => ({
+              monthIndex: rc.monthIndex,
+              newAnnualRate: rc.newAnnualRate,
+            })),
           },
-        }),
-      ]);
+          prepayments: {
+            create: prepaymentRules.map((pr: any) => ({
+              type: pr.type,
+              amount: pr.amount,
+              startMonthIndex: pr.startMonthIndex,
+              endMonthIndex: pr.endMonthIndex || null,
+            })),
+          },
+          paymentLogs: {
+            create: actualPaymentLogs.map((pl: any) => ({
+              monthIndex: pl.monthIndex,
+              paidEmi: pl.paidEmi,
+            })),
+          },
+        },
+      });
     } else {
       await db.loan.create({
         data: {

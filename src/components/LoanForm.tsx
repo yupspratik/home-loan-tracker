@@ -1,7 +1,6 @@
 'use client';
 
 import { LoanInputs, RecalculationStrategy } from '@/lib/financial/types';
-import { Calculator, Calendar, CalendarDays, Coins, Percent, RefreshCw } from 'lucide-react';
 import React from 'react';
 
 interface LoanFormProps {
@@ -33,123 +32,123 @@ export function LoanForm({ inputs, onChange }: LoanFormProps) {
   ];
 
   return (
-    <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-xl mb-8">
-      <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800">
-        <div className="p-2.5 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400">
-          <Calculator className="w-5 h-5" />
-        </div>
+    <div className="bento-card p-6 mb-8">
+      <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h2 className="text-lg font-semibold text-white">Loan Setup & Strategy</h2>
-          <p className="text-xs text-slate-400">Configure your primary loan parameters, start date, and prepayment impact strategy.</p>
+          <h2 className="text-base font-bold text-slate-900 dark:text-white">Loan Parameters & Strategy</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Configure principal, interest rate, tenure, and payoff strategy.</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Loan Amount */}
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-            <Coins className="w-3.5 h-3.5 text-blue-400" />
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
             Loan Amount (₹)
           </label>
           <input
-            id="input-loan-amount"
             type="number"
-            min="1000"
-            step="50000"
             value={inputs.loanAmount}
-            onChange={(e) => handleChange('loanAmount', parseFloat(e.target.value) || 0)}
-            className="w-full bg-slate-800/80 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-white transition-all outline-none"
+            onChange={(e) => handleChange('loanAmount', Math.max(0, Number(e.target.value)))}
+            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white font-semibold focus:outline-none"
           />
         </div>
 
         {/* Interest Rate */}
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-            <Percent className="w-3.5 h-3.5 text-indigo-400" />
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
             Annual Interest Rate (%)
           </label>
           <input
-            id="input-interest-rate"
             type="number"
-            min="0.1"
-            max="30"
             step="0.05"
             value={inputs.annualInterestRate}
-            onChange={(e) => handleChange('annualInterestRate', parseFloat(e.target.value) || 0)}
-            className="w-full bg-slate-800/80 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-white transition-all outline-none"
+            onChange={(e) => handleChange('annualInterestRate', Math.max(0, Number(e.target.value)))}
+            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white font-semibold focus:outline-none"
           />
         </div>
 
-        {/* Tenure Months / Years */}
+        {/* Tenure Months */}
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-amber-400" />
-            Tenure (Years)
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+            Tenure (Months / Years)
           </label>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <input
-              id="input-tenure-years"
               type="number"
-              min="1"
-              max="40"
-              step="1"
-              value={Math.round(inputs.tenureMonths / 12)}
-              onChange={(e) => handleChange('tenureMonths', (parseInt(e.target.value) || 1) * 12)}
-              className="w-full bg-slate-800/80 border border-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-white transition-all outline-none"
+              value={inputs.tenureMonths}
+              onChange={(e) => handleChange('tenureMonths', Math.max(1, Number(e.target.value)))}
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white font-semibold focus:outline-none"
             />
-            <div className="flex items-center px-3 bg-slate-800 border border-slate-700 rounded-xl text-xs font-medium text-slate-400">
-              {inputs.tenureMonths}m
-            </div>
+            <span className="text-xs text-slate-500 shrink-0">
+              (~{(inputs.tenureMonths / 12).toFixed(1)} yrs)
+            </span>
           </div>
         </div>
 
-        {/* Loan Start Date (Month & Year) */}
+        {/* Start Month & Year */}
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-            <CalendarDays className="w-3.5 h-3.5 text-purple-400" />
-            Start Date (Month / Year)
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+            Start Month & Year
           </label>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <select
-              id="input-start-month"
               value={inputs.startMonth || 1}
-              onChange={(e) => handleChange('startMonth', parseInt(e.target.value) || 1)}
-              className="w-1/2 bg-slate-800/80 border border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl px-2.5 py-2.5 text-xs font-semibold text-white transition-all outline-none cursor-pointer"
+              onChange={(e) => handleChange('startMonth', Number(e.target.value))}
+              className="px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white font-semibold focus:outline-none"
             >
               {months.map((m) => (
                 <option key={m.value} value={m.value}>
-                  {m.label.slice(0, 3)}
+                  {m.label}
                 </option>
               ))}
             </select>
+
             <input
-              id="input-start-year"
               type="number"
-              min="2000"
-              max="2060"
-              step="1"
               value={inputs.startYear || new Date().getFullYear()}
-              onChange={(e) => handleChange('startYear', parseInt(e.target.value) || 2024)}
-              className="w-1/2 bg-slate-800/80 border border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl px-2.5 py-2.5 text-xs font-semibold text-white transition-all outline-none"
+              onChange={(e) => handleChange('startYear', Number(e.target.value))}
+              className="px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white font-semibold focus:outline-none"
             />
           </div>
         </div>
+      </div>
 
-        {/* Prepayment Recalculation Strategy */}
-        <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-            <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
-            Prepayment Strategy
-          </label>
-          <select
-            id="input-recalculation-strategy"
-            value={inputs.recalculationStrategy || 'REDUCE_TENURE'}
-            onChange={(e) => handleChange('recalculationStrategy', e.target.value as RecalculationStrategy)}
-            className="w-full bg-slate-800/80 border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white transition-all outline-none cursor-pointer"
+      {/* Strategy Selection */}
+      <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80">
+        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
+          Prepayment & Rate Drop Strategy
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => handleChange('recalculationStrategy', 'REDUCE_TENURE')}
+            className={`p-3.5 rounded-xl border text-xs text-left transition ${
+              inputs.recalculationStrategy === 'REDUCE_TENURE' || !inputs.recalculationStrategy
+                ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-500 text-blue-900 dark:text-blue-200 font-semibold'
+                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-400'
+            }`}
           >
-            <option value="REDUCE_TENURE">Reduce Tenure (Keep EMI constant)</option>
-            <option value="REDUCE_EMI">Reduce Monthly EMI (Keep Tenure)</option>
-          </select>
+            <div className="font-bold mb-0.5">Reduce Tenure (Keep EMI Constant)</div>
+            <div className="text-[11px] opacity-80">
+              Lower rate / prepayments reduce total tenure and save maximum interest.
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleChange('recalculationStrategy', 'REDUCE_EMI')}
+            className={`p-3.5 rounded-xl border text-xs text-left transition ${
+              inputs.recalculationStrategy === 'REDUCE_EMI'
+                ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-500 text-blue-900 dark:text-blue-200 font-semibold'
+                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-400'
+            }`}
+          >
+            <div className="font-bold mb-0.5">Reduce Monthly EMI (Keep Tenure)</div>
+            <div className="text-[11px] opacity-80">
+              Lower rate / prepayments reduce monthly EMI outflow while keeping original tenure.
+            </div>
+          </button>
         </div>
       </div>
     </div>

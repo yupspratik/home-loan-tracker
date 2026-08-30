@@ -2,6 +2,7 @@
 
 import { ActualPaymentLog, InterestRateChange, MonthlyScheduleRow } from '@/lib/financial/types';
 import { ChevronLeft, ChevronRight, Edit2, Search } from 'lucide-react';
+import { PdfExportButton } from './PdfExportButton';
 import React, { useMemo, useState } from 'react';
 
 interface AmortizationTableProps {
@@ -90,19 +91,19 @@ export function AmortizationTable({
   };
 
   return (
-    <div className="bento-card p-6 mb-8">
+    <div className="bento-card p-6 mb-8" id="amortization-table">
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-4 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b-2 border-dashed border-[var(--border-color)]">
         <div>
-          <h2 className="text-base font-bold text-slate-900 dark:text-white">Amortization & Forecast Schedule</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <h2 className="text-xl font-black text-slate-900 dark:text-white">Amortization & Forecast Schedule</h2>
+          <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mt-1">
             Month-by-month breakdown of principal, interest, prepayments, and closing balance.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
             <input
               type="text"
               placeholder="Search month or year..."
@@ -111,29 +112,30 @@ export function AmortizationTable({
                 setSearchTerm(e.target.value);
                 setPage(1);
               }}
-              className="pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none w-48"
+              className="pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-2 border-[var(--border-color)] rounded-xl text-sm font-bold text-slate-900 dark:text-white focus:outline-none shadow-[2px_2px_0px_0px_var(--border-color)] w-48 sm:w-64 transition-all"
             />
           </div>
+          <PdfExportButton />
         </div>
       </div>
 
       {/* Amortization Schedule Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs text-left text-slate-700 dark:text-slate-300">
-          <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-semibold uppercase text-[11px]">
+      <div className="overflow-x-auto rounded-xl border-2 border-[var(--border-color)] shadow-[4px_4px_0px_0px_var(--border-color)]">
+        <table className="w-full text-sm text-left text-slate-900 dark:text-white">
+          <thead className="bg-slate-50 dark:bg-slate-800 border-b-2 border-[var(--border-color)] font-black uppercase text-xs">
             <tr>
-              <th className="p-3">Month</th>
-              <th className="p-3 text-right">Opening Balance</th>
-              <th className="p-3 text-center">Interest Rate</th>
-              <th className="p-3 text-right">Scheduled EMI</th>
-              <th className="p-3 text-right">Actual Paid EMI</th>
-              <th className="p-3 text-right">Interest Paid</th>
-              <th className="p-3 text-right">Principal Paid</th>
-              <th className="p-3 text-right">Prepayment</th>
-              <th className="p-3 text-right">Closing Balance</th>
+              <th className="p-4 border-r-2 border-dashed border-[var(--border-color)]">Month</th>
+              <th className="p-4 text-right border-r-2 border-dashed border-[var(--border-color)]">Opening Balance</th>
+              <th className="p-4 text-center border-r-2 border-dashed border-[var(--border-color)]">Interest Rate</th>
+              <th className="p-4 text-right border-r-2 border-dashed border-[var(--border-color)]">Scheduled EMI</th>
+              <th className="p-4 text-right border-r-2 border-dashed border-[var(--border-color)] bg-blue-50 dark:bg-blue-900/30">Actual Paid EMI</th>
+              <th className="p-4 text-right border-r-2 border-dashed border-[var(--border-color)]">Interest Paid</th>
+              <th className="p-4 text-right border-r-2 border-dashed border-[var(--border-color)]">Principal Paid</th>
+              <th className="p-4 text-right border-r-2 border-dashed border-[var(--border-color)]">Prepayment</th>
+              <th className="p-4 text-right">Closing Balance</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
+          <tbody className="divide-y-2 divide-[var(--border-color)] font-mono font-bold">
             {currentPageRows.map((row) => {
               const isEditingLog = editingLogMonth === row.monthIndex;
               const isEditingRate = editingRateMonth === row.monthIndex;
@@ -141,22 +143,22 @@ export function AmortizationTable({
               return (
                 <tr
                   key={row.monthIndex}
-                  className={`hover:bg-slate-50 dark:hover:bg-slate-900/50 transition ${
-                    row.isPayoffMonth ? 'bg-emerald-50 dark:bg-emerald-950/30' : ''
+                  className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${
+                    row.isPayoffMonth ? 'bg-emerald-50 dark:bg-emerald-900/30' : ''
                   }`}
                 >
-                  <td className="p-3 font-sans font-bold text-slate-900 dark:text-white whitespace-nowrap">
+                  <td className="p-4 font-sans font-black text-slate-900 dark:text-white whitespace-nowrap border-r-2 border-dashed border-[var(--border-color)] bg-yellow-50 dark:bg-yellow-900/30">
                     {row.monthLabel}
-                    <span className="text-[10px] font-normal text-slate-400 block font-mono">
+                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block font-mono mt-0.5">
                       m{row.monthIndex}
                     </span>
                   </td>
-                  <td className="p-3 text-right text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                  <td className="p-4 text-right text-slate-700 dark:text-slate-300 whitespace-nowrap border-r-2 border-dashed border-[var(--border-color)]">
                     {formatCurrency(row.openingBalance)}
                   </td>
 
                   {/* Interest Rate Cell */}
-                  <td className="p-3 text-center whitespace-nowrap">
+                  <td className="p-4 text-center whitespace-nowrap border-r-2 border-dashed border-[var(--border-color)]">
                     {isEditingRate ? (
                       <input
                         type="number"
@@ -168,7 +170,7 @@ export function AmortizationTable({
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') handleSaveRateChange(row.monthIndex);
                         }}
-                        className="w-16 px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 border border-blue-500 rounded text-center text-xs font-bold focus:outline-none"
+                        className="w-20 px-2 py-1 bg-white dark:bg-slate-800 border-2 border-blue-500 rounded-lg text-center text-sm font-black focus:outline-none shadow-[2px_2px_0px_0px_rgba(59,130,246,0.5)]"
                       />
                     ) : (
                       <span
@@ -178,10 +180,10 @@ export function AmortizationTable({
                             setEditingRateValue(row.interestRate.toString());
                           }
                         }}
-                        className={`px-2 py-0.5 rounded-full text-xs font-bold cursor-pointer transition ${
+                        className={`px-3 py-1 rounded-lg text-xs font-black cursor-pointer transition border-2 ${
                           rateChanges.some((rc) => rc.monthIndex === row.monthIndex)
-                            ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-blue-100 dark:hover:bg-blue-950'
+                            ? 'bg-[#FEF08A] text-black border-transparent shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-transparent hover:border-blue-500 hover:shadow-[2px_2px_0px_0px_rgba(59,130,246,0.5)]'
                         }`}
                         title="Click to edit interest rate for this month"
                       >
@@ -190,12 +192,12 @@ export function AmortizationTable({
                     )}
                   </td>
 
-                  <td className="p-3 text-right text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                  <td className="p-4 text-right text-slate-700 dark:text-slate-300 whitespace-nowrap border-r-2 border-dashed border-[var(--border-color)]">
                     {formatCurrency(row.scheduledEmi)}
                   </td>
 
                   {/* Actual Paid EMI Cell */}
-                  <td className="p-3 text-right whitespace-nowrap">
+                  <td className="p-4 text-right whitespace-nowrap border-r-2 border-dashed border-[var(--border-color)] bg-blue-50/50 dark:bg-blue-900/30 group">
                     {isEditingLog ? (
                       <input
                         type="number"
@@ -206,7 +208,7 @@ export function AmortizationTable({
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') handleSavePaidEmi(row.monthIndex);
                         }}
-                        className="w-24 px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 border border-blue-500 rounded text-right text-xs font-bold focus:outline-none"
+                        className="w-28 px-2 py-1 bg-white dark:bg-slate-800 border-2 border-blue-500 rounded-lg text-right text-sm font-black focus:outline-none shadow-[2px_2px_0px_0px_rgba(59,130,246,0.5)]"
                       />
                     ) : (
                       <div
@@ -216,29 +218,29 @@ export function AmortizationTable({
                             setEditingLogValue(row.actualEmiPaid.toString());
                           }
                         }}
-                        className={`cursor-pointer inline-flex items-center gap-1 font-bold ${
+                        className={`cursor-pointer flex items-center justify-end gap-1.5 font-black ${
                           row.excessEmiPrepayment > 0
                             ? 'text-cyan-600 dark:text-cyan-400'
-                            : 'text-slate-800 dark:text-slate-200'
+                            : 'text-slate-900 dark:text-slate-100'
                         }`}
                         title="Click to log actual EMI payment made"
                       >
+                        {onUpdateActualPaymentLog && <Edit2 className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 text-blue-500 transition-opacity" />}
                         <span>{formatCurrency(row.actualEmiPaid)}</span>
-                        {onUpdateActualPaymentLog && <Edit2 className="w-3 h-3 opacity-0 group-hover:opacity-100" />}
                       </div>
                     )}
                   </td>
 
-                  <td className="p-3 text-right text-rose-600 dark:text-rose-400 whitespace-nowrap font-medium">
+                  <td className="p-4 text-right text-rose-600 dark:text-rose-400 whitespace-nowrap border-r-2 border-dashed border-[var(--border-color)]">
                     {formatCurrency(row.interestPaid)}
                   </td>
-                  <td className="p-3 text-right text-slate-900 dark:text-white whitespace-nowrap font-medium">
+                  <td className="p-4 text-right text-slate-900 dark:text-white whitespace-nowrap border-r-2 border-dashed border-[var(--border-color)]">
                     {formatCurrency(row.totalPrincipalPaid)}
                   </td>
-                  <td className="p-3 text-right text-emerald-600 dark:text-emerald-400 whitespace-nowrap font-medium">
+                  <td className="p-4 text-right text-emerald-600 dark:text-emerald-400 whitespace-nowrap border-r-2 border-dashed border-[var(--border-color)]">
                     {row.totalPrepayment > 0 ? formatCurrency(row.totalPrepayment) : '-'}
                   </td>
-                  <td className="p-3 text-right font-bold text-slate-900 dark:text-white whitespace-nowrap">
+                  <td className="p-4 text-right font-black text-slate-900 dark:text-white whitespace-nowrap">
                     {formatCurrency(row.closingBalance)}
                   </td>
                 </tr>
@@ -249,24 +251,24 @@ export function AmortizationTable({
       </div>
 
       {/* Pagination Footer */}
-      <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500">
+      <div className="flex items-center justify-between pt-6 mt-6 border-t-2 border-dashed border-[var(--border-color)] text-sm font-bold text-slate-700 dark:text-slate-300">
         <div>
-          Page {page} of {totalPages} ({filteredRows.length} months)
+          Page {page} of {totalPages} <span className="opacity-60 ml-1">({filteredRows.length} months)</span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-600 dark:text-slate-400 disabled:opacity-40"
+            className="p-2.5 bg-white dark:bg-slate-800 border-2 border-[var(--border-color)] rounded-xl text-slate-900 dark:text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors shadow-[2px_2px_0px_0px_var(--border-color)] active:translate-y-[2px] active:shadow-none"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             disabled={page === totalPages}
             onClick={() => setPage(page + 1)}
-            className="p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-600 dark:text-slate-400 disabled:opacity-40"
+            className="p-2.5 bg-white dark:bg-slate-800 border-2 border-[var(--border-color)] rounded-xl text-slate-900 dark:text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors shadow-[2px_2px_0px_0px_var(--border-color)] active:translate-y-[2px] active:shadow-none"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </div>

@@ -18,58 +18,58 @@ export function SummaryCards({ summary, scheduledEmi }: SummaryCardsProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="summary-cards">
       {/* 1. Balance Left (Real-World As Of Current Month) */}
-      <div className="bento-card p-5 bg-gradient-to-br from-blue-500/5 to-transparent border-blue-200/50 dark:border-blue-800/40">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Balance Left to Pay</span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-medium">
+      <div className="bento-card p-5 bg-[#E0F2FE]">
+        <div className="flex flex-col items-start gap-2 mb-3">
+          <span className="text-sm font-bold text-slate-900 dark:text-white">Balance Left to Pay</span>
+          <span className="text-xs px-2.5 py-1 rounded-full bg-slate-900 dark:bg-white text-white dark:text-black font-bold border-2 border-[var(--border-color)] shadow-sm">
             {summary.currentAsOfLabel}
           </span>
         </div>
-        <div className="text-2xl font-extrabold text-blue-600 dark:text-blue-400">
+        <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
           {formatCurrency(summary.currentBalance)}
         </div>
-        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+        <div className="text-xs font-bold text-slate-800 dark:text-slate-300">
           Initial: {formatCurrency(summary.initialLoanAmount)}
         </div>
       </div>
 
       {/* 2. Monthly EMI */}
-      <div className="bento-card p-5">
-        <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">
+      <div className="bento-card p-5 bg-[#FEF08A]">
+        <div className="text-sm font-bold text-slate-900 dark:text-white mb-3">
           Scheduled Monthly EMI
         </div>
-        <div className="text-2xl font-extrabold text-slate-900 dark:text-white">
+        <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
           {formatCurrency(scheduledEmi)}
         </div>
-        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+        <div className="text-xs font-bold text-slate-800 dark:text-slate-300">
           Base Interest Rate: {summary.originalInterestRate}% p.a.
         </div>
       </div>
 
       {/* 3. Interest Saved via Prepayment */}
-      <div className="bento-card p-5 bg-gradient-to-br from-emerald-500/5 to-transparent border-emerald-200/50 dark:border-emerald-800/40">
-        <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">
+      <div className="bento-card p-5 bg-[#D1FAE5]">
+        <div className="text-sm font-bold text-slate-900 dark:text-white mb-3">
           Interest Saved
         </div>
-        <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+        <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
           {formatCurrency(summary.interestSaved)}
         </div>
-        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+        <div className="text-xs font-bold text-slate-800 dark:text-slate-300">
           {summary.monthsSaved > 0 ? `${summary.monthsSaved} Months Saved` : 'Standard Schedule'}
         </div>
       </div>
 
       {/* 4. Projected Payoff Target Date */}
-      <div className="bento-card p-5">
-        <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">
+      <div className="bento-card p-5 bg-[#FFE4E6]">
+        <div className="text-sm font-bold text-slate-900 dark:text-white mb-3">
           Projected Payoff Date
         </div>
-        <div className="text-2xl font-extrabold text-slate-900 dark:text-white">
+        <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">
           {summary.projectedPayoffLabel}
         </div>
-        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+        <div className="text-xs font-bold text-slate-800 dark:text-slate-300">
           Original Payoff: {summary.originalPayoffLabel}
         </div>
       </div>

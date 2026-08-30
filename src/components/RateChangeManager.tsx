@@ -2,7 +2,7 @@
 
 import { formatMonthLabel } from '@/lib/financial/emi';
 import { InterestRateChange } from '@/lib/financial/types';
-import { Edit3, Plus, Trash2, TrendingUp } from 'lucide-react';
+import { Plus, Trash2, TrendingUp } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface RateChangeManagerProps {
@@ -20,7 +20,6 @@ export function RateChangeManager({
 }: RateChangeManagerProps) {
   const [monthIndex, setMonthIndex] = useState<number>(13);
   const [newRate, setNewRate] = useState<number>(8.75);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const handleAddOrUpdate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +32,6 @@ export function RateChangeManager({
     );
 
     onChange(updated);
-    setEditingIndex(null);
   };
 
   const handleDelete = (mIndex: number) => {
@@ -41,24 +39,24 @@ export function RateChangeManager({
   };
 
   return (
-    <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-xl mb-8">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-indigo-400">
+    <div className="bento-card p-6 mb-8 bg-white dark:bg-slate-900" id="rate-revisions">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-dashed border-[var(--border-color)]">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-[#E0F2FE] border-2 border-[var(--border-color)] rounded-xl text-black shadow-[2px_2px_0px_0px_var(--border-color)]">
             <TrendingUp className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Interest Rate Revision Manager</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-xl font-black text-slate-900 dark:text-white">Interest Rate Revisions</h2>
+            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">
               Specify interest rate changes for any month. The new rate will persist until updated again.
             </p>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleAddOrUpdate} className="flex flex-wrap gap-4 items-end mb-6 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+      <form onSubmit={handleAddOrUpdate} className="flex flex-wrap gap-4 items-end mb-6 bg-slate-50 dark:bg-slate-800 p-5 rounded-2xl border-2 border-[var(--border-color)]">
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-black text-slate-800 dark:text-slate-200 mb-1.5">
             Month Number (e.g. Month 13)
           </label>
           <input
@@ -68,12 +66,12 @@ export function RateChangeManager({
             max="600"
             value={monthIndex}
             onChange={(e) => setMonthIndex(parseInt(e.target.value) || 1)}
-            className="w-36 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm font-semibold text-white outline-none focus:border-indigo-500"
+            className="w-36 bg-white dark:bg-slate-900 border-2 border-[var(--border-color)] rounded-xl px-4 py-2.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 shadow-[2px_2px_0px_0px_var(--border-color)]"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-black text-slate-800 dark:text-slate-200 mb-1.5">
             New Interest Rate (%)
           </label>
           <input
@@ -84,13 +82,13 @@ export function RateChangeManager({
             max="30"
             value={newRate}
             onChange={(e) => setNewRate(parseFloat(e.target.value) || 0)}
-            className="w-36 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm font-semibold text-white outline-none focus:border-indigo-500"
+            className="w-36 bg-white dark:bg-slate-900 border-2 border-[var(--border-color)] rounded-xl px-4 py-2.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 shadow-[2px_2px_0px_0px_var(--border-color)]"
           />
         </div>
 
-        <div className="text-xs text-slate-400 flex items-center h-10 px-2">
+        <div className="text-sm font-bold text-slate-600 dark:text-slate-400 flex items-center h-11 px-2">
           Effective Date:{' '}
-          <span className="ml-1 text-indigo-300 font-semibold">
+          <span className="ml-1 text-black dark:text-white px-2 py-1 bg-[#FEF08A] dark:bg-blue-600 rounded-md border-2 border-[var(--border-color)]">
             {formatMonthLabel(monthIndex, startYear, startMonth).label}
           </span>
         </div>
@@ -98,42 +96,42 @@ export function RateChangeManager({
         <button
           id="btn-add-rate-change"
           type="submit"
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition-all shadow-md ml-auto"
+          className="flex items-center gap-2 bg-[#FEF08A] text-black font-black text-sm px-5 py-2.5 bento-button ml-auto hover:-translate-y-0.5"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-5 h-5" />
           Add Rate Revision
         </button>
       </form>
 
       {/* List of active rate changes */}
       {rateChanges.length === 0 ? (
-        <div className="text-center py-6 text-xs text-slate-500 bg-slate-950/40 rounded-xl border border-slate-800/50">
+        <div className="text-center py-8 text-sm font-bold text-slate-500 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-[var(--border-color)]">
           No rate revisions configured. The initial base interest rate applies throughout the loan tenure.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {rateChanges.map((rc) => {
             const label = formatMonthLabel(rc.monthIndex, startYear, startMonth).label;
             return (
               <div
                 key={rc.monthIndex}
-                className="flex items-center justify-between bg-slate-800/60 border border-slate-700/70 p-3 rounded-xl hover:border-indigo-500/50 transition-all"
+                className="flex items-center justify-between bg-white dark:bg-slate-800 border-2 border-[var(--border-color)] p-4 rounded-xl shadow-[2px_2px_0px_0px_var(--border-color)]"
               >
                 <div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs font-bold text-slate-500 dark:text-slate-400">
                     Month {rc.monthIndex} ({label})
                   </div>
-                  <div className="text-sm font-bold text-indigo-400">
-                    {rc.newAnnualRate}% Annual Rate
+                  <div className="text-lg font-black text-slate-900 dark:text-white">
+                    {rc.newAnnualRate}% <span className="text-sm font-bold text-slate-500">Rate</span>
                   </div>
                 </div>
                 <button
                   id={`btn-delete-rate-change-${rc.monthIndex}`}
                   type="button"
                   onClick={() => handleDelete(rc.monthIndex)}
-                  className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                  className="p-2 text-slate-500 hover:text-red-600 bg-slate-100 hover:bg-red-100 dark:bg-slate-700 dark:hover:bg-red-900/30 rounded-lg border-2 border-transparent hover:border-red-500 transition-all"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-5 h-5" />
                 </button>
               </div>
             );

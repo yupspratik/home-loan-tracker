@@ -26,7 +26,7 @@ export default function SharedDashboardPage({
   const [rateChanges, setRateChanges] = useState<InterestRateChange[]>(DEFAULT_LOAN_STATE.rateChanges);
   const [prepaymentRules, setPrepaymentRules] = useState<PrepaymentRule[]>(DEFAULT_LOAN_STATE.prepaymentRules);
   const [actualPaymentLogs, setActualPaymentLogs] = useState<ActualPaymentLog[]>(DEFAULT_LOAN_STATE.actualPaymentLogs);
-  const [loanName, setLoanName] = useState<string>('Home Loan Tracker');
+  const [loanName, setLoanName] = useState<string>('LoanTracker Pro');
 
   useEffect(() => {
     fetch(`/api/share/${token}`)
@@ -75,7 +75,7 @@ export default function SharedDashboardPage({
             href="/"
             className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs rounded-xl inline-block"
           >
-            Go to Home Loan Tracker
+            Go to LoanTracker Pro
           </Link>
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronDown, FolderPlus, Layers } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface PortfolioSelectorProps {
   currentLoanName?: string;
@@ -13,6 +13,22 @@ export function PortfolioSelector({
   onSelectPortfolio,
 }: PortfolioSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
   const [portfolios, setPortfolios] = useState<string[]>([
     'Primary Home Loan',
     'Rental Property Loan',
@@ -43,7 +59,7 @@ export function PortfolioSelector({
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded-xl text-xs font-semibold transition"

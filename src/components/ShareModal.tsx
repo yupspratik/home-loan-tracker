@@ -43,9 +43,9 @@ export function ShareModal() {
     <>
       <button
         onClick={handleOpen}
-        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold shadow-sm transition"
+        className="px-4 py-2 bg-blue-600 text-white font-bold border-2 border-[var(--border-color)] rounded-xl shadow-[2px_2px_0px_0px_var(--border-color)] hover:-translate-y-0.5 transition-transform flex items-center gap-2 text-sm"
       >
-        <Share2 className="w-3.5 h-3.5" />
+        <Share2 className="w-4 h-4" />
         <span>1-Click Share</span>
       </button>
 

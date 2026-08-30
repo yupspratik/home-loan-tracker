@@ -1,29 +1,32 @@
 @import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Default Light Mode Palette */
-  --bg-main: #f8fafc;
+  /* Neobrutalism Light Mode Palette */
+  --bg-main: #F4F3EF;
   --bg-card: #ffffff;
   --bg-card-subtle: #f1f5f9;
-  --border-card: #e2e8f0;
+  --border-color: #000000;
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
-  --shadow-clay: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.02);
-  --shadow-hover: 0 16px 36px -4px rgba(0, 0, 0, 0.08);
+  --shadow-brutal: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-brutal-lg: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-hover: 2px 2px 0px 0px rgba(0, 0, 0, 1);
 }
 
 html.dark {
-  /* Dark Mode Palette */
-  --bg-main: #090d16;
+  /* Neobrutalism Dark Mode Palette */
+  --bg-main: #0B0F19;
   --bg-card: #131b2e;
   --bg-card-subtle: #1e293b;
-  --border-card: #1e293b;
+  --border-color: #e2e8f0;
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-muted: #64748b;
-  --shadow-clay: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 4px 12px -2px rgba(0, 0, 0, 0.2);
-  --shadow-hover: 0 16px 36px -4px rgba(0, 0, 0, 0.4);
+  --shadow-brutal: 4px 4px 0px 0px rgba(226, 232, 240, 1);
+  --shadow-brutal-lg: 6px 6px 0px 0px rgba(226, 232, 240, 1);
+  --shadow-hover: 2px 2px 0px 0px rgba(226, 232, 240, 1);
 }
 
 body {
@@ -34,17 +37,32 @@ body {
   min-height: 100vh;
 }
 
-/* Claymorphic Bento Cards */
+/* Neobrutalist Cards */
 .bento-card {
   background-color: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 1.5rem;
-  box-shadow: var(--shadow-clay);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 2px solid var(--border-color);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-brutal);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.bento-card:hover {
+
+.bento-button {
+  border: 2px solid var(--border-color);
+  border-radius: 9999px;
+  box-shadow: var(--shadow-brutal);
+  font-weight: 700;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bento-button:hover {
+  transform: translate(2px, 2px);
   box-shadow: var(--shadow-hover);
+}
+
+.bento-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
 /* Custom Soft Animations */
@@ -69,5 +87,6 @@ body {
   .bento-card {
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
+    transform: none !important;
   }
 }

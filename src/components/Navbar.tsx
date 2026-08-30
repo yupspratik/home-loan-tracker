@@ -5,8 +5,6 @@ import { Moon, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AuthModal } from './AuthModal';
-import { PdfExportButton } from './PdfExportButton';
-import { PortfolioSelector } from './PortfolioSelector';
 import { ShareModal } from './ShareModal';
 
 export function Navbar() {
@@ -22,7 +20,7 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <header className="sticky top-0 z-40 bg-[var(--bg-main)] border-b-4 border-[var(--border-color)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Brand Logo */}
@@ -31,22 +29,22 @@ export function Navbar() {
               H
             </div>
             <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white hidden sm:inline">
-              Home Loan Tracker
+              LoanTracker Pro
             </span>
           </Link>
 
           {/* Navigation Menu Tabs */}
-          <nav className="hidden md:flex items-center gap-1 bg-slate-100 dark:bg-slate-900/80 p-1 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl">
+          <nav className="hidden lg:flex items-center gap-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+                  className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-transform ${
                     isActive
-                      ? 'bg-white dark:bg-blue-600 text-blue-600 dark:text-white font-semibold shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      ? 'bg-[#FEF08A] dark:bg-blue-600 text-black dark:text-white border-2 border-[var(--border-color)] shadow-[2px_2px_0px_0px_var(--border-color)]'
+                      : 'text-slate-700 dark:text-slate-300 hover:-translate-y-0.5'
                   }`}
                 >
                   {item.name}
@@ -60,29 +58,29 @@ export function Navbar() {
             {/* Light / Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-800 transition"
+              className="p-2 bg-[var(--bg-card)] text-slate-800 dark:text-slate-200 border-2 border-[var(--border-color)] rounded-xl shadow-[2px_2px_0px_0px_var(--border-color)] hover:-translate-y-0.5 transition-transform hidden sm:block"
               title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
             >
-              {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-amber-400" />}
+              {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5 text-amber-400" />}
             </button>
 
-            <PortfolioSelector />
             <AuthModal />
-            <PdfExportButton />
             <ShareModal />
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden flex items-center justify-around py-2 border-t border-slate-200 dark:border-slate-800 text-xs overflow-x-auto">
+        <div className="md:hidden flex flex-wrap justify-center items-center gap-3 py-3 border-t-2 border-[var(--border-color)] px-4 bg-[var(--bg-main)]">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap ${
-                  isActive ? 'text-blue-600 dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/60' : 'text-slate-600 dark:text-slate-400'
+                className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-transform ${
+                  isActive 
+                    ? 'bg-[#FEF08A] dark:bg-blue-600 text-black dark:text-white border-2 border-[var(--border-color)] shadow-[2px_2px_0px_0px_var(--border-color)]' 
+                    : 'text-slate-600 dark:text-slate-400'
                 }`}
               >
                 {item.name}

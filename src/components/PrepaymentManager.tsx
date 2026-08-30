@@ -2,7 +2,7 @@
 
 import { formatMonthLabel } from '@/lib/financial/emi';
 import { PrepaymentFrequency, PrepaymentRule } from '@/lib/financial/types';
-import { ArrowUpRight, Calendar, Plus, Trash2, Wallet } from 'lucide-react';
+import { ArrowUpRight, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface PrepaymentManagerProps {
@@ -38,7 +38,6 @@ export function PrepaymentManager({
     };
 
     onChange([...prepayments, newRule]);
-    setAmount(100000);
   };
 
   const handleDeleteRule = (id: string) => {
@@ -48,21 +47,21 @@ export function PrepaymentManager({
   const frequencyLabels: Record<PrepaymentFrequency, string> = {
     ONE_TIME: 'One-Time Lump Sum',
     MONTHLY: 'Every Month',
-    QUARTERLY: 'Every Quarter (3 Months)',
-    HALF_YEARLY: 'Every Half Year (6 Months)',
-    YEARLY: 'Every Year (12 Months)',
+    QUARTERLY: 'Every Quarter',
+    HALF_YEARLY: 'Every Half Year',
+    YEARLY: 'Every Year',
   };
 
   return (
-    <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-xl mb-8">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
+    <div className="bento-card p-6 mb-8 bg-white dark:bg-slate-900" id="prepayment-manager">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-dashed border-[var(--border-color)]">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-[#D1FAE5] border-2 border-[var(--border-color)] rounded-xl text-black shadow-[2px_2px_0px_0px_var(--border-color)]">
             <ArrowUpRight className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Prepayment Schedule Manager</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-xl font-black text-slate-900 dark:text-white">Prepayment Schedule</h2>
+            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">
               Add lump sum one-time or recurring prepayments to accelerate loan payoff.
             </p>
           </div>
@@ -70,16 +69,16 @@ export function PrepaymentManager({
       </div>
 
       {/* Add Form */}
-      <form id="form-add-prepayment" onSubmit={handleAddRule} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-6 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+      <form id="form-add-prepayment" onSubmit={handleAddRule} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-6 bg-slate-50 dark:bg-slate-800 p-5 rounded-2xl border-2 border-[var(--border-color)]">
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-black text-slate-800 dark:text-slate-200 mb-1.5">
             Frequency
           </label>
           <select
             id="input-prepayment-type"
             value={type}
             onChange={(e) => setType(e.target.value as PrepaymentFrequency)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white outline-none focus:border-emerald-500"
+            className="w-full bg-white dark:bg-slate-900 border-2 border-[var(--border-color)] rounded-xl px-4 py-2.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 shadow-[2px_2px_0px_0px_var(--border-color)]"
           >
             <option value="ONE_TIME">One-Time</option>
             <option value="MONTHLY">Monthly</option>
@@ -90,7 +89,7 @@ export function PrepaymentManager({
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-black text-slate-800 dark:text-slate-200 mb-1.5">
             Amount (₹)
           </label>
           <input
@@ -100,12 +99,12 @@ export function PrepaymentManager({
             step="5000"
             value={amount}
             onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white outline-none focus:border-emerald-500"
+            className="w-full bg-white dark:bg-slate-900 border-2 border-[var(--border-color)] rounded-xl px-4 py-2.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 shadow-[2px_2px_0px_0px_var(--border-color)]"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-black text-slate-800 dark:text-slate-200 mb-1.5">
             Start Month
           </label>
           <input
@@ -115,13 +114,13 @@ export function PrepaymentManager({
             max="600"
             value={startMonthIndex}
             onChange={(e) => setStartMonthIndex(parseInt(e.target.value) || 1)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white outline-none focus:border-emerald-500"
+            className="w-full bg-white dark:bg-slate-900 border-2 border-[var(--border-color)] rounded-xl px-4 py-2.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 shadow-[2px_2px_0px_0px_var(--border-color)]"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1">
-            End Month (Optional)
+          <label className="block text-sm font-black text-slate-800 dark:text-slate-200 mb-1.5">
+            End Month <span className="opacity-60 font-medium">(Optional)</span>
           </label>
           <input
             id="input-prepayment-end-month"
@@ -131,7 +130,7 @@ export function PrepaymentManager({
             placeholder="No Limit"
             value={endMonthIndex}
             onChange={(e) => setEndMonthIndex(e.target.value)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white outline-none focus:border-emerald-500"
+            className="w-full bg-white dark:bg-slate-900 border-2 border-[var(--border-color)] rounded-xl px-4 py-2.5 text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500 shadow-[2px_2px_0px_0px_var(--border-color)]"
           />
         </div>
 
@@ -139,20 +138,20 @@ export function PrepaymentManager({
           id="btn-add-prepayment-rule"
           type="button"
           onClick={(e) => handleAddRule(e)}
-          className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition-all shadow-md h-9"
+          className="flex items-center justify-center gap-2 bg-[#D1FAE5] text-black font-black text-sm px-4 py-2.5 bento-button h-11 hover:-translate-y-0.5"
         >
-          <Plus className="w-4 h-4" />
-          Add Prepayment
+          <Plus className="w-5 h-5" />
+          Add Rule
         </button>
       </form>
 
       {/* Rules list */}
       {prepayments.length === 0 ? (
-        <div className="text-center py-6 text-xs text-slate-500 bg-slate-950/40 rounded-xl border border-slate-800/50">
+        <div className="text-center py-8 text-sm font-bold text-slate-500 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-[var(--border-color)]">
           No prepayments configured. Add one-time or recurring prepayments above.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {prepayments.map((rule) => {
             const startLabel = formatMonthLabel(rule.startMonthIndex, startYear, startMonth).label;
             const endLabel = rule.endMonthIndex
@@ -164,18 +163,18 @@ export function PrepaymentManager({
                 key={rule.id}
                 id={`prepayment-rule-item-${rule.id}`}
                 data-prepayment-type={rule.type}
-                className="flex items-center justify-between bg-slate-800/60 border border-slate-700/70 p-3.5 rounded-xl hover:border-emerald-500/50 transition-all"
+                className="flex items-center justify-between bg-white dark:bg-slate-800 border-2 border-[var(--border-color)] p-4 rounded-xl shadow-[2px_2px_0px_0px_var(--border-color)]"
               >
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-xs font-black px-2.5 py-1 rounded-md bg-[#D1FAE5] text-black border-2 border-[var(--border-color)] shadow-[2px_2px_0px_0px_var(--border-color)]">
                       {frequencyLabels[rule.type]}
                     </span>
-                    <span className="text-sm font-bold text-white">
+                    <span className="text-lg font-black text-slate-900 dark:text-white">
                       ₹{rule.amount.toLocaleString('en-IN')}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs font-bold text-slate-600 dark:text-slate-400">
                     Starts: Month {rule.startMonthIndex} ({startLabel})
                     {rule.type !== 'ONE_TIME' && ` → Ends: ${endLabel}`}
                   </div>
@@ -184,9 +183,9 @@ export function PrepaymentManager({
                   id={`btn-delete-prepayment-${rule.id}`}
                   type="button"
                   onClick={() => handleDeleteRule(rule.id)}
-                  className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                  className="p-2 text-slate-500 hover:text-red-600 bg-slate-100 hover:bg-red-100 dark:bg-slate-700 dark:hover:bg-red-900/30 rounded-lg border-2 border-transparent hover:border-red-500 transition-all"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-5 h-5" />
                 </button>
               </div>
             );

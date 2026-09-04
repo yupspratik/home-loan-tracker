@@ -10,6 +10,7 @@ generator client {
 
 model Loan {
   id                    String           @id @default(cuid())
+  userId                String
   name                  String           @default("My Home Loan")
   loanAmount            Float
   annualInterestRate    Float
@@ -23,6 +24,8 @@ model Loan {
   rateChanges           RateChange[]
   prepayments           PrepaymentRule[]
   paymentLogs           PaymentLog[]
+
+  @@index([userId])
 }
 
 model RateChange {

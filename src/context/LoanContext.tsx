@@ -65,7 +65,7 @@ export function LoanProvider({ children }: { children: React.ReactNode }) {
   const [prepaymentRules, setPrepaymentRules] = useState<PrepaymentRule[]>(DEFAULT_LOAN_STATE.prepaymentRules);
   const [actualPaymentLogs, setActualPaymentLogs] = useState<ActualPaymentLog[]>(DEFAULT_LOAN_STATE.actualPaymentLogs);
 
-  // Load state or apply demo data
+  // Auth listener
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
@@ -75,6 +75,13 @@ export function LoanProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
     });
 
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Load state or apply demo data
+  useEffect(() => {
     if (isDemoMode) {
       // Seed data if demo mode activated
       setLoanInputs(SEEDED_DEMO_STATE.inputs);
@@ -91,26 +98,30 @@ export function LoanProvider({ children }: { children: React.ReactNode }) {
       setIsLoaded(true);
 
       // Sync with Supabase API backend if configured
-      fetch('/api/loans')
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.isDbConfigured) {
-            setIsDbSynced(true);
-            if (data.loanState) {
-              setLoanInputs(data.loanState.inputs);
-              setRateChanges(data.loanState.rateChanges || []);
-              setPrepaymentRules(data.loanState.prepaymentRules || []);
-              setActualPaymentLogs(data.loanState.actualPaymentLogs || []);
+      // Only fetch if user is logged in, otherwise API returns 401 anyway
+      if (user) {
+        fetch('/api/loans')
+          .then((res) => {
+            if (res.ok) return res.json();
+            throw new Error('Not authorized or failed to fetch');
+          })
+          .then((data) => {
+            if (data.isDbConfigured) {
+              setIsDbSynced(true);
+              if (data.loanState) {
+                setLoanInputs(data.loanState.inputs);
+                setRateChanges(data.loanState.rateChanges || []);
+                setPrepaymentRules(data.loanState.prepaymentRules || []);
+                setActualPaymentLogs(data.loanState.actualPaymentLogs || []);
+              }
             }
-          }
-        })
-        .catch((err) => console.log('Browser storage mode active'));
+          })
+          .catch((err) => console.log('Browser storage mode active or unauthorized'));
+      } else {
+        setIsDbSynced(false);
+      }
     }
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [isDemoMode]);
+  }, [isDemoMode, user?.id]);
 
   // Auto-save changes to local storage & Supabase API if NOT in demo mode
   useEffect(() => {

@@ -1,15 +1,52 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+async function getUser() {
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch (error) {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+      },
+    }
+  );
+
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
+}
+
+export async function GET(req: NextRequest) {
   try {
     if (!process.env.DATABASE_URL) {
       return NextResponse.json({ isDbConfigured: false });
     }
 
+    const user = await getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const loan = await db.loan.findFirst({
+      where: { userId: user.id },
       include: {
         rateChanges: { orderBy: { monthIndex: 'asc' } },
         prepayments: true,
@@ -64,11 +101,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const user = await getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { inputs, rateChanges = [], prepaymentRules = [], actualPaymentLogs = [] } = body;
 
     // Find existing primary loan or create new
-    const existingLoan = await db.loan.findFirst();
+    const existingLoan = await db.loan.findFirst({
+      where: { userId: user.id }
+    });
 
     if (existingLoan) {
       // Clear old nested relations first to avoid unique constraint conflicts
@@ -110,6 +154,7 @@ export async function POST(req: NextRequest) {
     } else {
       await db.loan.create({
         data: {
+          userId: user.id,
           name: 'My Home Loan',
           loanAmount: inputs.loanAmount,
           annualInterestRate: inputs.annualInterestRate,

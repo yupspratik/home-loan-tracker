@@ -10,6 +10,7 @@ export interface SavedLoanState {
   rateChanges: InterestRateChange[];
   prepaymentRules: PrepaymentRule[];
   actualPaymentLogs: ActualPaymentLog[];
+  ownerId?: string | null;
 }
 
 export const DEFAULT_LOAN_STATE: SavedLoanState = {
@@ -48,6 +49,7 @@ export function loadLoanStateFromStorage(): SavedLoanState {
       rateChanges: parsed.rateChanges || [],
       prepaymentRules: parsed.prepaymentRules || [],
       actualPaymentLogs: parsed.actualPaymentLogs || [],
+      ownerId: parsed.ownerId || null,
     };
   } catch (e) {
     console.error('Failed to load loan state from local storage:', e);

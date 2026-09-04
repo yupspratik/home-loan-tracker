@@ -90,11 +90,17 @@ export function LoanProvider({ children }: { children: React.ReactNode }) {
       setActualPaymentLogs(SEEDED_DEMO_STATE.actualPaymentLogs!);
       setIsLoaded(true);
     } else {
-      const saved = loadLoanStateFromStorage();
-      setLoanInputs(saved.inputs);
-      setRateChanges(saved.rateChanges || []);
-      setPrepaymentRules(saved.prepaymentRules || []);
-      setActualPaymentLogs(saved.actualPaymentLogs || []);
+      let initialData = loadLoanStateFromStorage() as any;
+      
+      // Prevent cross-user data leakage from local storage
+      if (user && initialData.ownerId && initialData.ownerId !== user.id) {
+        initialData = { ...DEFAULT_LOAN_STATE };
+      }
+      
+      setLoanInputs(initialData.inputs);
+      setRateChanges(initialData.rateChanges || []);
+      setPrepaymentRules(initialData.prepaymentRules || []);
+      setActualPaymentLogs(initialData.actualPaymentLogs || []);
       setIsLoaded(true);
 
       // Sync with Supabase API backend if configured
@@ -132,6 +138,7 @@ export function LoanProvider({ children }: { children: React.ReactNode }) {
       rateChanges,
       prepaymentRules,
       actualPaymentLogs,
+      ownerId: user?.id || null,
     };
 
     saveLoanStateToStorage(stateToSave);

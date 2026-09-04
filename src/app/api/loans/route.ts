@@ -107,7 +107,11 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { inputs, rateChanges = [], prepaymentRules = [], actualPaymentLogs = [] } = body;
+    let { inputs, rateChanges = [], prepaymentRules = [], actualPaymentLogs = [] } = body;
+
+    // Deduplicate to prevent P2002 Unique Constraint errors on Supabase
+    rateChanges = Array.from(new Map(rateChanges.map((rc: any) => [rc.monthIndex, rc])).values());
+    actualPaymentLogs = Array.from(new Map(actualPaymentLogs.map((pl: any) => [pl.monthIndex, pl])).values());
 
     // Find existing primary loan or create new
     const existingLoan = await db.loan.findFirst({
@@ -187,8 +191,11 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Supabase DB Save Error:', error);
-    return NextResponse.json({ error: 'Failed to save loan state to Supabase.' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to save loan state to Supabase.', details: error.message },
+      { status: 500 }
+    );
   }
 }
